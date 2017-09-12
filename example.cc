@@ -18,7 +18,7 @@ int main(int argc, const char* argv[]) {
     TauPolInterface  TauSingleMu;
     vector<TLorentzVector> tauandprod_SingleMu;
     tauandprod_SingleMu.push_back(TLorentzVector(4.535169,43.546793,-13.992208,45.998151)); //  order matters! First should be tau
-    tauandprod_SingleMu.push_back(TLorentzVector(-0.024813,1.699042,-0.626012,1.813950)); // 
+    tauandprod_SingleMu.push_back(TLorentzVector(-0.024813,1.699042,-0.626012,1.813950)); //   muon
     TauSingleMu.Configure(tauandprod_SingleMu,"lepton");
     if(TauSingleMu.isConfigured())std::cout<<" Single Muon: omega =       "<< TauSingleMu.getOmega() <<std::endl;
 
@@ -30,7 +30,7 @@ int main(int argc, const char* argv[]) {
     TauPolInterface  TauSinglePi;
     vector<TLorentzVector> tauandprod_SinglePi;
     tauandprod_SinglePi.push_back(TLorentzVector(18.556395,-1.697132,42.019311,45.999996)); //  order matters! First should be tau
-    tauandprod_SinglePi.push_back(TLorentzVector(13.259153,-1.264031,31.915783,34.583806)); // 
+    tauandprod_SinglePi.push_back(TLorentzVector(13.259153,-1.264031,31.915783,34.583806)); // pion
     TauSinglePi.Configure(tauandprod_SinglePi,"pion");
     if(TauSinglePi.isConfigured())std::cout<<" Single Pion: omega =   "<< TauSinglePi.getOmega() <<std::endl;
 
@@ -45,38 +45,14 @@ int main(int argc, const char* argv[]) {
     vector<TLorentzVector> tauandprod_SingleRho;
 
     tauandprod_SingleRho.push_back(TLorentzVector(41.565165,-7.157718,-18.152869,45.951927)); //  order matters! First should be tau
-    tauandprod_SingleRho.push_back(TLorentzVector(13.955560,-2.078894,-5.975415,15.323333)); // 
-    tauandprod_SingleRho.push_back(TLorentzVector(5.780525,-0.674187,-2.142884,6.203158)); // 
+    tauandprod_SingleRho.push_back(TLorentzVector(13.955560,-2.078894,-5.975415,15.323333)); // pi charged
+    tauandprod_SingleRho.push_back(TLorentzVector(5.780525,-0.674187,-2.142884,6.203158)); //  pi0
     TauSingleRho.Configure(tauandprod_SingleRho,"rho");
     if(TauSinglePi.isConfigured())
       {
 	std::cout<<" Single Rho: omega    =   "<< TauSingleRho.getOmega() <<std::endl;  // this returns only cosbeta angle (regualr charge-neutral energy assymetry)
 	std::cout<<" Single Rho: omegabar =   "<< TauSingleRho.getOmegabar() <<std::endl;  // cosbeta + costheta + cospsi. This is still not the full observable, implementation of the last angle alpha is in progress ...
       }
-
-    // //------------------------------ Single A1 --------------------------------------------------
-    // //  Momentum example from pythia 
-    // // (x,y,z,t)=(41.565165,-7.157718,-18.152869,45.951927) (P,eta,phi,E)=(45.917562,-0.418109,-0.170532,45.951927)   -  tau
-    // // (x,y,z,t)=(13.955560,-2.078894,-5.975415,15.323333) (P,eta,phi,E)=(15.322697,-0.411766,-0.147878,15.323333)    - pi charged  
-    // // (x,y,z,t)=(5.780525,-0.674187,-2.142884,6.203158) (P,eta,phi,E)=(6.201689,-0.360361,-0.116106,6.203158)        - pi0
-
-    // TauPolInterface  TauSingleRho;
-    // vector<TLorentzVector> tauandprod_SingleRho;
-
-    // tauandprod_SingleRho.push_back(TLorentzVector(41.565165,-7.157718,-18.152869,45.951927)); //  order matters! First should be tau
-    // tauandprod_SingleRho.push_back(TLorentzVector(13.955560,-2.078894,-5.975415,15.323333)); // 
-    // tauandprod_SingleRho.push_back(TLorentzVector(5.780525,-0.674187,-2.142884,6.203158)); // 
-    // TauSingleRho.Configure(tauandprod_SingleRho,"rho");
-    // if(TauSinglePi.isConfigured())
-    //   {
-    // 	std::cout<<" Single Rho: omega    =   "<< TauSingleRho.getOmega() <<std::endl;  // this returns only cosbeta angle (regualr charge-neutral energy assymetry)
-    // 	std::cout<<" Single Rho: omegabar =   "<< TauSingleRho.getOmegabar() <<std::endl;  // cosbeta + costheta + cospsi. This is still not the full observable, implementation of the last angle alpha is in progress ...
-    //   }
-
-
-
-
-
 
 
     std::cout<<"------------------------------  Pion - Pion Pair --------------------------------------------------"<<std::endl;
@@ -95,10 +71,10 @@ int main(int argc, const char* argv[]) {
 
 
     tauandprod_Pi1.push_back(TLorentzVector(18.556395,-1.697132,42.019311,45.999996)); //  order matters! First should be tau
-    tauandprod_Pi1.push_back(TLorentzVector(13.259153,-1.264031,31.915783,34.583806)); // 
+    tauandprod_Pi1.push_back(TLorentzVector(13.259153,-1.264031,31.915783,34.583806)); // pi
 
     tauandprod_Pi2.push_back(TLorentzVector(-18.556395,1.697132,-42.019309,45.999994)); //  order matters! First should be tau
-    tauandprod_Pi2.push_back(TLorentzVector(-7.890180,-0.016431,-16.596710,18.377309)); // 
+    tauandprod_Pi2.push_back(TLorentzVector(-7.890180,-0.016431,-16.596710,18.377309)); // pi
 
 
 
@@ -113,12 +89,12 @@ int main(int argc, const char* argv[]) {
     std::cout<<"------------------------------  Pion - Rho Pair --------------------------------------------------"<<std::endl;
     //  Momentum example from pythia 
     //   First _______________
-    // (x,y,z,t)=(-41.565165,7.157718,18.221388,45.979038) (P,eta,phi,E)=(45.944693,0.419601,2.971060,45.979038)
-    // (x,y,z,t)=(-10.011427,1.198892,3.770703,10.765858) (P,eta,phi,E)=(10.764953,0.365758,3.022408,10.765858)
+    // (x,y,z,t)=(-41.565165,7.157718,18.221388,45.979038) (P,eta,phi,E)=(45.944693,0.419601,2.971060,45.979038)  - tau
+    // (x,y,z,t)=(-10.011427,1.198892,3.770703,10.765858) (P,eta,phi,E)=(10.764953,0.365758,3.022408,10.765858)  - pi 
     //   Second  _______________
-    // (x,y,z,t)=(41.565165,-7.157718,-18.152869,45.951927) (P,eta,phi,E)=(45.917562,-0.418109,-0.170532,45.951927)
-    // (x,y,z,t)=(13.955560,-2.078894,-5.975415,15.323333) (P,eta,phi,E)=(15.322697,-0.411766,-0.147878,15.323333)
-    // (x,y,z,t)=(5.780525,-0.674187,-2.142884,6.203158) (P,eta,phi,
+    // (x,y,z,t)=(41.565165,-7.157718,-18.152869,45.951927) (P,eta,phi,E)=(45.917562,-0.418109,-0.170532,45.951927)  - tau
+    // (x,y,z,t)=(13.955560,-2.078894,-5.975415,15.323333) (P,eta,phi,E)=(15.322697,-0.411766,-0.147878,15.323333)  - pi charged 
+    // (x,y,z,t)=(5.780525,-0.674187,-2.142884,6.203158) (P,eta,phi,                                                 - pi0
 
 
 
@@ -128,11 +104,11 @@ int main(int argc, const char* argv[]) {
 
 
     tauandprod_Pi.push_back(TLorentzVector(-41.565165,7.157718,18.221388,45.979038)); //  order matters! First should be tau
-    tauandprod_Pi.push_back(TLorentzVector(-10.011427,1.198892,3.770703,10.765858)); // 
+    tauandprod_Pi.push_back(TLorentzVector(-10.011427,1.198892,3.770703,10.765858)); // pi 
 
     tauandprod_Rho.push_back(TLorentzVector(41.565165,-7.157718,-18.152869,45.951927)); //  order matters! First should be tau
-    tauandprod_Rho.push_back(TLorentzVector(13.955560,-2.078894,-5.975415,15.323333)); // 
-    tauandprod_Rho.push_back(TLorentzVector(5.780525,-0.674187,-2.142884,6.203158)); // 
+    tauandprod_Rho.push_back(TLorentzVector(13.955560,-2.078894,-5.975415,15.323333)); //   pi charged 
+    tauandprod_Rho.push_back(TLorentzVector(5.780525,-0.674187,-2.142884,6.203158)); //     pi0 
 
     TauPiRhoPair.ConfigurePair(tauandprod_Pi,"pion",tauandprod_Rho,"rho");
     if(TauPiRhoPair.isPairConfigured())
@@ -157,12 +133,12 @@ int main(int argc, const char* argv[]) {
     vector<TLorentzVector> tauandprod_A1;
 
     tauandprod__Pi.push_back(TLorentzVector(-0.239895,35.808984,28.817160,45.999203)); //  order matters! First should be tau
-    tauandprod__Pi.push_back(TLorentzVector(0.546745,7.638778,6.673710,10.159121)); // 
+    tauandprod__Pi.push_back(TLorentzVector(0.546745,7.638778,6.673710,10.159121)); //   pi 
 
     tauandprod_A1.push_back(TLorentzVector(-0.239895,35.808984,28.817160,45.999203)); //  order matters! First should be tau
-    tauandprod_A1.push_back(TLorentzVector(0.045646,-4.407360,-3.941665,5.914652)); // 
-    tauandprod_A1.push_back(TLorentzVector(0.116904,-18.704540,-14.602361,23.730190)); // 
-    tauandprod_A1.push_back(TLorentzVector(-0.137735,-7.375450,-5.496942,9.200657)); // 
+    tauandprod_A1.push_back(TLorentzVector(0.045646,-4.407360,-3.941665,5.914652)); //  OS pi
+    tauandprod_A1.push_back(TLorentzVector(0.116904,-18.704540,-14.602361,23.730190)); //  SS1 pi 
+    tauandprod_A1.push_back(TLorentzVector(-0.137735,-7.375450,-5.496942,9.200657)); //  SS2 pi  (s1 > s2!)
 
     TauPiA1Pair.ConfigurePair(tauandprod__Pi,"pion",tauandprod_A1,"a1");
     if(TauPiA1Pair.isPairConfigured())
