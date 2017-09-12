@@ -1,4 +1,4 @@
-#include "TauPolInterface.h"
+#include "TauPolSoftware/TauDecaysInterface/interface/TauPolInterface.h"
 #include <iostream>
 TauPolInterface::TauPolInterface():
   mrho(0.773),
