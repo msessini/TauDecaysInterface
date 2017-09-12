@@ -65,13 +65,9 @@ $(PROGRAM): $(OBJS)
 	@$(LD) $(LDFLAGS) *.o $(LIBS) -o $(PROGRAM)
 	@echo "done"
 
-#vpath %.cc TauDataFormat/TauNtuple/src/ 
-#vpath %.cc Validation/EventGenerator/src/
-#vpath %.cc SimpleFits/FitSoftware/src/
-
 
 ##########################################################
-###                                                    ###
+###clean  and PHONY rules                              ###
 ##########################################################
 
 $(OBJS2): %.o: %.cc
