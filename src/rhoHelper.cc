@@ -27,7 +27,7 @@ rhoHelper::Setup(vector<TLorentzVector> TauRhoandProd, TLorentzVector ReferenceF
    coscab = 0.975; 
    mrho = 0.773; // GeV
    debug=false;
-   for(int i=0; i<TauRhoandProd.size(); i++){
+   for(unsigned int i=0; i<TauRhoandProd.size(); i++){
      TauRhoandProd_RF.push_back(Boost(TauRhoandProd.at(i),ReferenceFrame));
    }
   TauLV = TauRhoandProd.at(0);
@@ -91,16 +91,16 @@ double
 rhoHelper::getCosbetaRho(){
   double cb=-999;
   cb = (mrho/sqrt(mrho*mrho - 4*mpi*mpi))  *   (TauRhoPi.E() -   TauRhoPi0.E())/(TauRhoPi.E() +  TauRhoPi0.E()) ;
-  if(fabs(cb) - 1 >0  && fabs(cb) < 1.01 &&  cb> 0  )  cb= 1;
-  if(fabs(cb) - 1 >0  && fabs(cb) < 1.01 &&  cb< 0  )  cb=-1;
-  if(fabs(cb) > 1 ){if(debug){std::cout<<"Warning! Cos beta > 1:  "<<cb <<std::endl;  }}
+  if(std::fabs(cb) - 1 >0  && std::fabs(cb) < 1.01 &&  cb> 0  )  cb= 1;
+  if(std::fabs(cb) - 1 >0  && std::fabs(cb) < 1.01 &&  cb< 0  )  cb=-1;
+  if(std::fabs(cb) > 1 ){if(debug){std::cout<<"Warning! Cos beta > 1:  "<<cb <<std::endl;  }}
   return cb;
 }
 
 double
 rhoHelper::getSinbetaRho(){
   double sb=-999;
-  if(fabs(getCosbetaRho()) > 1 ){if(debug){std::cout<<"Warning! Cos beta > 1:  "<< getCosbetaRho()<<std::endl;  }return 0;}
+  if(std::fabs(getCosbetaRho()) > 1 ){if(debug){std::cout<<"Warning! Cos beta > 1:  "<< getCosbetaRho()<<std::endl;  }return 0;}
   sb = sqrt(1- getCosbetaRho()*getCosbetaRho());
   return sb;
 }
@@ -111,11 +111,11 @@ rhoHelper::getCosthetaRho(){
   double QQ = ProductLV.M2();
   double x = ProductLV.E()/TauLV.E();
   double s = 4*TauLV.E()*TauLV.E();
-  if(fabs(ct) - 1 >0  && fabs(ct) < 1.01 &&  ct> 0  )  ct = 1;
-  if(fabs(ct) - 1 >0  && fabs(ct) < 1.01 &&  ct< 0  )  ct=-1;
+  if(std::fabs(ct) - 1 >0  && std::fabs(ct) < 1.01 &&  ct> 0  )  ct = 1;
+  if(std::fabs(ct) - 1 >0  && std::fabs(ct) < 1.01 &&  ct< 0  )  ct=-1;
   if( 1 - 4*mtau*mtau/s  <= 0 ){std::cout<<"Warning! In costheta root square <=0! return -999"<<std::endl; return ct;}
   ct= (2*x*mtau*mtau - mtau*mtau - QQ)/( (mtau*mtau - QQ)*sqrt(1 - 4*mtau*mtau/s) );
-  if(fabs(ct) > 1 ){if(debug){std::cout<<"Warning! Cos theta > 1:  "<<ct<<std::endl; }}
+  if(std::fabs(ct) > 1 ){if(debug){std::cout<<"Warning! Cos theta > 1:  "<<ct<<std::endl; }}
   return ct;
 }
 
@@ -123,7 +123,7 @@ double
 rhoHelper::getSinthetaRho(){
   double st=-999;
    st = sqrt(1- getCosthetaRho()*getCosthetaRho());
-   if(fabs(getCosthetaRho()) > 1 ){if(debug){std::cout<<"Warning! Cos theta > 1"<<std::endl; }}
+   if(std::fabs(getCosthetaRho()) > 1 ){if(debug){std::cout<<"Warning! Cos theta > 1"<<std::endl; }}
   return st;
 }
 
@@ -132,9 +132,9 @@ rhoHelper::getUltrarel_cospsiLF(){
   double cos=-999;
   double QQ = ProductLV.M2();
   cos = (getCosthetaRho()*(mtau*mtau  + QQ)   + (mtau*mtau  - QQ))/(getCosthetaRho()*(mtau*mtau  - QQ)   + (mtau*mtau  + QQ));
-  if(fabs(cos) - 1 >0  && fabs(cos) < 1.01 && cos > 0  ) cos = 1;
-  if(fabs(cos) - 1 >0  && fabs(cos) < 1.01 && cos < 0  ) cos =-1;
-  if(fabs(cos) > 1 )if(debug){std::cout<<"Warning! Cos psi > 1:  "<<cos<<std::endl; }
+  if(std::fabs(cos) - 1 >0  && std::fabs(cos) < 1.01 && cos > 0  ) cos = 1;
+  if(std::fabs(cos) - 1 >0  && std::fabs(cos) < 1.01 && cos < 0  ) cos =-1;
+  if(std::fabs(cos) > 1 )if(debug){std::cout<<"Warning! Cos psi > 1:  "<<cos<<std::endl; }
   return cos;
 }
 
@@ -205,7 +205,7 @@ double
 rhoHelper::getOmegaRho(){
   double omega=-999;
   omega = getCosbetaRho();
-  if(  isinf(fabs(omega)) ||  isnan(fabs(omega))) omega  = -999.;
+  if(  std::isinf(std::fabs(omega)) ||  std::isnan(std::fabs(omega))) omega  = -999.;
   return omega;
 }
 
@@ -219,7 +219,7 @@ rhoHelper::getOmegaRhoBar(){
   double Ps = 0.5*(3*getUltrarel_cospsiLF() -1);
   double RR = mtau*mtau/QQ;
   omega = ((-2 + RR + 2*(1+RR)*Ps*Be)*getCosthetaRho() + 3*sqrt(RR)*Be*getSinthetaRho()*2*getUltrarel_cospsiLF()*getSinpsiLF())  /  ( 2 +RR - 2*(1-RR)*Ps*Be);
-  if(  isinf(fabs(omega)) ||  isnan(fabs(omega))) omega  = -999.;
+  if(  std::isinf(std::fabs(omega)) ||  std::isnan(std::fabs(omega))) omega  = -999.;
   return omega;
 }
 // double 
@@ -230,6 +230,6 @@ rhoHelper::getOmegaRhoBar(){
 //   double Ps = 0.5*(3*getUltrarel_cospsiLF() -1);
 //   double RR = mtau*mtau/QQ;
 //   omega = (RR*getCosthetaRho() - sqrt(RR)*getSinthetaRho()*2* getSinbetaRho()*getCosbetaRho()*DPF_cosalpha() -   getCosthetaRho()* getSinbetaRho()*getSinbetaRho()*(1+RR) )  /  ( RR + (1-RR)*getSinbetaRho()*getSinbetaRho());
-//   if(  isinf(fabs(omega)) ||  isnan(fabs(omega))) omega  = -999.;
+//   if(  std::isinf(std::fabs(omega)) ||  std::isnan(std::fabs(omega))) omega  = -999.;
 //   return omega;
 // }
