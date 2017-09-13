@@ -1,3 +1,17 @@
+// -*- C++ -*-
+//
+// 
+/**\class TauPolInterface.h TauPolInterface.cc
+ Description: 
+*/
+//
+// Original Author:  Vladimir Cherepanov 
+//         Created:  Sun Sep 10 17:49:02 CET 2017
+//
+//
+
+
+
 #ifndef TauPolInterface_h
 #define TauPolInterface_h
 #include <vector>

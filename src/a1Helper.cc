@@ -100,30 +100,8 @@ a1Helper::isConfigured(){
 }
 
 
-
-void 
-a1Helper::SetParametersReco(TLorentzVector tau, TLorentzVector mu ){
- Initialize(tau,mu);
-}
-void 
-a1Helper::SetFrame(TLorentzVector vec){
-  Boost_ = vec;
-}
-
-
-
 a1Helper::~a1Helper(){
 }
-
-
-
-void 
-a1Helper::Initialize(TLorentzVector t, TLorentzVector mu){
-  RecoMuon_=mu;
-  KFitTau_=t;
-}
-
-
 
 
 

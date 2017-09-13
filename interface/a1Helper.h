@@ -39,13 +39,12 @@ class a1Helper {
   void Setup(vector<TLorentzVector> TauA1andProd, TLorentzVector ReferenceFrame );
   void subSetup(double s1, double s2, double s3, double Q);
 
-  void Initialize(TLorentzVector t, TLorentzVector mu);
-  bool OmegaIsValid(){return isValid_;}
+
+ 
   std::vector<TLorentzVector> getBoosted(){return TauA1andProd_RF;}
 
 
-  void SetParametersReco(TLorentzVector tau, TLorentzVector mu );
-  void SetFrame(TLorentzVector Vec );
+
   TLorentzVector Boost(TLorentzVector pB, TLorentzVector frame);
 
   /* double costheta(); */
