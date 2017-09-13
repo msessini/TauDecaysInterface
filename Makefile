@@ -4,8 +4,8 @@
 
 
 
-CXX           = g++ -Wno-deprecated -Wall -std=c++11
-LD            = g++ -Wno-deprecated -Wall -std=c++11
+CXX           = g++ -Wno-deprecated -Wall
+LD            = g++ -Wno-deprecated -Wall
 INSTALL	      = /usr/bin/install
 SHELL = /bin/sh
 
