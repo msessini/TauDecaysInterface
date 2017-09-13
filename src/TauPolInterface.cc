@@ -1,4 +1,4 @@
-#include "TauPolInterface.h"
+#include "TauPolSoftware/TauDecaysInterface/interface/TauPolInterface.h"
 #include <iostream>
 TauPolInterface::TauPolInterface():
   mrho(0.773),
@@ -376,7 +376,7 @@ TauPolInterface::getCombOmega(){
   
   double Omega=999.;
   Omega = (omega1 + omega2)/(1 + omega1*omega2);
-  if(  isinf(fabs(Omega)) ||  isnan(fabs(Omega))) Omega  = -999.;
+  if(  std::isinf(std::fabs(Omega)) ||  std::isnan(std::fabs(Omega))) Omega  = -999.;
   return Omega;
 }
 
@@ -440,7 +440,7 @@ TauPolInterface::getCombOmegaBar(){
     }
   double Omega=999.;
   Omega = (omega1 + omega2)/(1 + omega1*omega2);
-  if(  isinf(fabs(Omega)) ||  isnan(fabs(Omega))) Omega  = -999.;
+  if(  std::isinf(std::fabs(Omega)) ||  std::isnan(std::fabs(Omega))) Omega  = -999.;
   return Omega;
 }
 

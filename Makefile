@@ -4,8 +4,8 @@
 
 
 
-CXX           = g++ -Wno-deprecated -Wall
-LD            = g++ -Wno-deprecated -Wall
+CXX           = g++ -Wno-deprecated -Wall -std=c++11
+LD            = g++ -Wno-deprecated -Wall -std=c++11
 INSTALL	      = /usr/bin/install
 SHELL = /bin/sh
 
@@ -17,9 +17,9 @@ USERLIBS   =
 SHAREDLIBFLAGS =
 
 
-override CXXFLAGS += -I$(ROOTSYS)/include -I./ -c
+override CXXFLAGS += -I$(ROOTSYS)/include $(shell root-config --cflags) -I../../ -c
 LDFLAGS       =  
-ROOTLIBS      =  -L$(ROOTSYS)/lib -L/usr/lib/ -L/lib/i686/  -lCore -lCint -lHist -lGraf  -lGraf3d -lGpad -lTree -lRint -lReflexDict -lReflex -lPostscript -lMatrix -lPhysics -lMinuit2 -lGui -LObj -lThread -rdynamic -Wl,--rpath $(ROOTSYS)/lib
+ROOTLIBS      =  -L$(ROOTSYS)/lib $(shell root-config --glibs)
 
 DEFS  	      = -DSTANDALONE=1
 LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
@@ -27,16 +27,16 @@ LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
 SF_SRCS    = $(wildcard *.cc)
 SF_HDRS    = $(SF_SRCS:.cc=.h)
 
-HDRS          =		a1Helper.h \
-		rhoHelper.h \
-		TauPolInterface.h
+HDRS          =		interface/a1Helper.h \
+		interface/rhoHelper.h \
+		interface/TauPolInterface.h
 	         
 
 
-SRCS          = 	a1Helper.cc \
-	        rhoHelper.cc \
-		TauPolInterface.cc \
-		example.cc
+SRCS          = 	src/a1Helper.cc \
+	        src/rhoHelper.cc \
+		src/TauPolInterface.cc \
+		bin/example.cc
 
 OBJS1          = $(SRCS:.cc=.o) 
 OBJS2         = $(SRCS:.cc=.o) 
@@ -53,16 +53,16 @@ $(SHAREDLIB): $(OBJS2)
 	@echo $(LD)  -fPIC $(LIBS)  -c  $(SRCS) -o $(OBJS2)
 	@g++  -shared -o $(SHAREDLIB) $(OBJS2)
 	@echo "Linking SharedLib: $(SHAREDLIB) Complete"
-	@echo $(LD) $(LDFLAGS) *.o $(LIBS) -o $(PROGRAM)
-	@$(LD) $(LDFLAGS) *.o $(LIBS) -o $(PROGRAM)
+	@echo $(LD) $(LDFLAGS) src/*.o bin/*.o $(LIBS) -o $(PROGRAM)
+	@$(LD) $(LDFLAGS) src/*.o bin/*.o $(LIBS) -o $(PROGRAM)
 	@echo "======================================================="
 
 
 
 $(PROGRAM): $(OBJS)
 	@echo "Linking $(PROGRAM) ..."
-	@echo $(LD) $(LDFLAGS) *.o $(LIBS) -o $(PROGRAM)
-	@$(LD) $(LDFLAGS) *.o $(LIBS) -o $(PROGRAM)
+	@echo $(LD) $(LDFLAGS) src/*.o bin/*.o $(LIBS) -o $(PROGRAM)
+	@$(LD) $(LDFLAGS) src/*.o bin/*.o $(LIBS) -o $(PROGRAM)
 	@echo "done"
 
 
@@ -81,6 +81,6 @@ $(OBJS2): %.o: %.cc
 install: $(SHAREDLIB)
 all:  $(SHAREDLIB) $(PROGRAM)
 clean:
-	@rm *.o
-	@rm *.so
+	@rm src/*.o bin/*.o
+	@rm libUserLib.so
 	@rm run.exe
