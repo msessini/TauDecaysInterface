@@ -8,7 +8,11 @@ TauPolInterface::TauPolInterface():
   debug(false)
 { }  
 TauPolInterface::TauPolInterface(vector<TLorentzVector> TauAndProd, string type): 
-  TauPolInterface()
+  mrho(0.773),
+  mpi(0.13957018),
+  mtau(1.776),
+  ma1(1.251),
+  debug(false)
  {
   if(type=="lepton" || type =="pion"){
     if(TauAndProd.size()!=2){ 
@@ -29,7 +33,11 @@ TauPolInterface::TauPolInterface(vector<TLorentzVector> TauAndProd, string type)
   Configure(TauAndProd,  type);
  }
 TauPolInterface::TauPolInterface(vector<TLorentzVector> TauAndProd1, string type1,vector<TLorentzVector> TauAndProd2, string type2): 
-  TauPolInterface()
+  mrho(0.773),
+  mpi(0.13957018),
+  mtau(1.776),
+  ma1(1.251),
+  debug(false)
  {
   if(type1=="lepton" || type1 =="pion"){
     if(TauAndProd1.size()!=2){ 
