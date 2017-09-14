@@ -24,8 +24,9 @@ TauPolInterface::TauPolInterface(vector<TLorentzVector> TauAndProd, string type)
     if(TauAndProd.size()!=4){
       std::cout<<" Warning!! Size of 2nd  input vector  !=4 !! "<< " type:  "<<type<<std::endl;
     }
-    Configure(TauAndProd,  type);
   }
+  
+  Configure(TauAndProd,  type);
  }
 TauPolInterface::TauPolInterface(vector<TLorentzVector> TauAndProd1, string type1,vector<TLorentzVector> TauAndProd2, string type2): 
   TauPolInterface()
