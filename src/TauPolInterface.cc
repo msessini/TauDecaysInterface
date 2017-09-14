@@ -317,64 +317,8 @@ TauPolInterface::getOmegabar(string which){
 
 double
 TauPolInterface::getCombOmega(){
-  double omega1=-999;
-  SetupLeg("first");
-  if(type_=="pion" || type_=="lepton")
-    {
-           omega1 = 2*ProductLV.E()/TauLV.E() - 1;
-    }
-  if(type_=="rho")
-    {
-      std::vector<TLorentzVector> particles; // tau, pi, pi0
-      particles.push_back(TauLV);
-      particles.push_back(TauRhoPi);
-      particles.push_back(TauRhoPi0);
-      rhoHelper rho;
-      rho.Configure(particles,TauRhoPi+TauRhoPi0);
-      omega1=rho.getOmegaRho();
-    }
-
-     if(type_=="a1")
-       {
-	 std::vector<TLorentzVector> particles;// tau, os,ss1,ss2
-	 particles.push_back(TauLV);
-	 particles.push_back(TauA1OSPi);
-	 particles.push_back(TauA1SSPi1);
-	 particles.push_back(TauA1SSPi2);
-	 a1Helper a1;
-	 a1.Configure(particles, TauA1OSPi + TauA1SSPi1 + TauA1SSPi2);
-	 omega1 = a1.getA1omega();
-       }
-  SetupLeg("second"); 
-  double omega2=-999.;
-  if(type_=="pion" || type_=="lepton")
-    {
-            omega2 = 2*ProductLV.E()/TauLV.E() - 1;
-    }
-  if(type_=="rho")
-    {
-      std::vector<TLorentzVector> particles; // tau, pi, pi0
-      particles.push_back(TauLV);
-      particles.push_back(TauRhoPi);
-      particles.push_back(TauRhoPi0);
-      rhoHelper rho;
-      rho.Configure(particles,TauRhoPi+TauRhoPi0);
-      omega2=rho.getCosbetaRho();
-
-    }
-
-  if(type_=="a1")
-    {
-      std::vector<TLorentzVector> particles;// tau, os,ss1,ss2
-      particles.push_back(TauLV);
-      particles.push_back(TauA1OSPi);
-      particles.push_back(TauA1SSPi1);
-      particles.push_back(TauA1SSPi2);
-      a1Helper a1;
-      a1.Configure(particles, TauA1OSPi + TauA1SSPi1 + TauA1SSPi2);
-      omega2 = a1.getA1omega();
-    }
-  
+  double omega1 = getOmega("first");
+  double omega2 = getOmega("second");
   double Omega=999.;
   Omega = (omega1 + omega2)/(1 + omega1*omega2);
   if(  std::isinf(std::fabs(Omega)) ||  std::isnan(std::fabs(Omega))) Omega  = -999.;
@@ -385,60 +329,8 @@ TauPolInterface::getCombOmega(){
 
 double
 TauPolInterface::getCombOmegaBar(){
-  double omega1=-999;
-  SetupLeg("first");
-  if(type_=="pion" || type_=="lepton")
-    {
-            omega1 = 2*ProductLV.E()/TauLV.E() - 1;
-    }
-  if(type_=="rho")
-    {
-      std::vector<TLorentzVector> particles; // tau, pi, pi0
-      particles.push_back(TauLV);
-      particles.push_back(TauRhoPi);
-      particles.push_back(TauRhoPi0);
-      rhoHelper rho;
-      rho.Configure(particles,TauRhoPi+TauRhoPi0);
-      omega1=rho.getOmegaRhoBar();
-    }
-  if(type_=="a1")
-    {
-      std::vector<TLorentzVector> particles;// tau, os,ss1,ss2
-      particles.push_back(TauLV);
-      particles.push_back(TauA1OSPi);
-      particles.push_back(TauA1SSPi1);
-      particles.push_back(TauA1SSPi2);
-      a1Helper a1;
-      a1.Configure(particles, TauA1OSPi + TauA1SSPi1 + TauA1SSPi2);
-      omega1 = a1.TRF_vgetA1omega();
-    }
-  SetupLeg("second");
-  double omega2=-999.;
-  if(type_=="pion" || type_=="lepton")
-    {
-            omega2 = 2*ProductLV.E()/TauLV.E() - 1;
-    }
-  if(type_=="rho")
-    {
-      std::vector<TLorentzVector> particles; // tau, pi, pi0
-      particles.push_back(TauLV);
-      particles.push_back(TauRhoPi);
-      particles.push_back(TauRhoPi0);
-      rhoHelper rho;
-      rho.Configure(particles,TauRhoPi+TauRhoPi0);
-      omega2=rho.getOmegaRhoBar();
-    }
-  if(type_=="a1")
-    {
-      std::vector<TLorentzVector> particles;// tau, os,ss1,ss2
-      particles.push_back(TauLV);
-      particles.push_back(TauA1OSPi);
-      particles.push_back(TauA1SSPi1);
-      particles.push_back(TauA1SSPi2);
-      a1Helper a1;
-      a1.Configure(particles, TauA1OSPi + TauA1SSPi1 + TauA1SSPi2);
-      omega2 = a1.TRF_vgetA1omega();
-    }
+  double omega1 = getOmegabar("first");
+  double omega2 = getOmegabar("second");
   double Omega=999.;
   Omega = (omega1 + omega2)/(1 + omega1*omega2);
   if(  std::isinf(std::fabs(Omega)) ||  std::isnan(std::fabs(Omega))) Omega  = -999.;
