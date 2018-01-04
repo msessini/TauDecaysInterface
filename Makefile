@@ -30,7 +30,7 @@ SF_HDRS    = $(SF_SRCS:.cc=.h)
 HDRS          =		interface/a1Helper.h \
 		interface/rhoHelper.h \
 		interface/TauPolInterface.h
-	         
+
 
 
 SRCS          = 	src/a1Helper.cc \
@@ -42,9 +42,9 @@ OBJS1          = $(SRCS:.cc=.o)
 OBJS2         = $(SRCS:.cc=.o) 
 
 
-PROGRAM       = run.exe
+PROGRAM       = run
 
-SHAREDLIB     = libUserLib.so
+SHAREDLIB     = libTDCILib.so
 $(SHAREDLIB): $(OBJS2)
 	@echo "======================================================="
 	@echo "Print out environment:  "
@@ -55,6 +55,8 @@ $(SHAREDLIB): $(OBJS2)
 	@echo "Linking SharedLib: $(SHAREDLIB) Complete"
 	@echo $(LD) $(LDFLAGS) src/*.o bin/*.o $(LIBS) -o $(PROGRAM)
 	@$(LD) $(LDFLAGS) src/*.o bin/*.o $(LIBS) -o $(PROGRAM)
+	@mv libTDCILib.so bin
+	@mv run bin
 	@echo "======================================================="
 
 

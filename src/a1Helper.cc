@@ -8,8 +8,9 @@ a1Helper::a1Helper(vector<TLorentzVector> TauA1andProd){
   if(TauA1andProd.size()!=4){
     std::cout<<" Warning!! Size of a1 input vector != 4 !! "<<std::endl;
   }
-  TLorentzVector fakeboost(0,0,0,0);
-  Setup(TauA1andProd,fakeboost);
+  TLorentzVector boost = TauA1andProd.at(0);
+  int fakecharge = 1;
+  Setup(TauA1andProd,boost,fakecharge);
 }
 
 
@@ -17,13 +18,14 @@ a1Helper::a1Helper(vector<TLorentzVector> TauA1andProd, TLorentzVector RefernceF
   if(TauA1andProd.size()!=4){
     std::cout<<" Warning!! Size of a1 input vector != 4 !! "<<std::endl;
   }
-  Setup(TauA1andProd,RefernceFrame);
+  int fakecharge = 1;
+  Setup(TauA1andProd,RefernceFrame,fakecharge);
 }
 
 
 void 
-a1Helper::Setup(vector<TLorentzVector> TauA1andProd, TLorentzVector ReferenceFrame){
-   mpi   = 0.13957018; // GeV 
+a1Helper::Setup(vector<TLorentzVector> TauA1andProd, TLorentzVector ReferenceFrame, int taucharge){
+   mpi  = 0.13957018; // GeV 
    mpi0 = 0.1349766;   // GeV
    mtau = 1.776; // GeV
    coscab = 0.975; 
@@ -40,25 +42,43 @@ a1Helper::Setup(vector<TLorentzVector> TauA1andProd, TLorentzVector ReferenceFra
    gpiprimerhopi = 5.8; //GeV
    grhopipi = 6.08;  //GeV
    beta = -0.145;
+   COEF1 =2.0*sqrt(2.)/3.0;
+   COEF2 =-2.0*sqrt(2.)/3.0;
+   COEF3 = 2.0*sqrt(2.)/3.0; //C AJW 2/98: Add in the D-wave and I=0 3pi substructure:
+   SIGN = taucharge;
+
+
    debug  = false;
+
+   TVector3 RotVector = TauA1andProd.at(0).Vect();
+
+   ReferenceFrame.SetVect(Rotate(ReferenceFrame.Vect(),RotVector));
+   _tauAlongZLabFrame = TauA1andProd.at(0);
+   _tauAlongZLabFrame.SetVect(Rotate(_tauAlongZLabFrame.Vect(),RotVector));
+   
    for(unsigned int i=0; i<TauA1andProd.size(); i++){
-     TauA1andProd_RF.push_back(Boost(TauA1andProd.at(i),ReferenceFrame));
+     TLorentzVector Rotated = TauA1andProd.at(i);
+     Rotated.SetVect(Rotate(Rotated.Vect(),RotVector));
+     TauA1andProd_RF.push_back(Boost(Rotated,ReferenceFrame));
    }
    LFosPionLV  = TauA1andProd.at(1);
-   LFss1pionLV =TauA1andProd.at(2);
-   LFss2pionLV =TauA1andProd.at(3);
+   LFss1pionLV = TauA1andProd.at(2);
+   LFss2pionLV = TauA1andProd.at(3);
    LFa1LV = LFosPionLV+LFss1pionLV+LFss2pionLV;
    LFtauLV = TauA1andProd.at(0);
    LFQ= LFa1LV.M();
 
+  
+
    _osPionLV   = TauA1andProd_RF.at(1);
-   _ss1pionLV =TauA1andProd_RF.at(2);
-   _ss2pionLV =TauA1andProd_RF.at(3);
-   _a1LV = _osPionLV+_ss1pionLV+_ss2pionLV;
-   _tauLV = TauA1andProd_RF.at(0);
-   _s12 = _ss1pionLV +_ss2pionLV;
-   _s13 = _ss1pionLV + _osPionLV;
-   _s23 = _ss2pionLV + _osPionLV;
+   _ss1pionLV  = TauA1andProd_RF.at(2);
+   _ss2pionLV  = TauA1andProd_RF.at(3);
+   _a1LV       = _osPionLV+_ss1pionLV+_ss2pionLV;
+   _tauLV      = TauA1andProd_RF.at(0);
+   _nuLV      = _tauLV - _a1LV;
+   _s12 = _ss1pionLV  + _ss2pionLV;
+   _s13 = _ss1pionLV  + _osPionLV;
+   _s23 = _ss2pionLV  + _osPionLV;
    _s1  =  _s23.M2(); 
    _s2  =  _s13.M2();
    _s3  =  _s12.M2();
@@ -72,38 +92,35 @@ a1Helper::subSetup(double s1, double s2, double s3, double Q){
    _s3  =   s3;
    _Q = Q;
 }
-
-
+ 
 
 void 
-a1Helper::Configure(vector<TLorentzVector> TauA1andProd){
+a1Helper::Configure(vector<TLorentzVector> TauA1andProd, int taucharge){
 
   if(TauA1andProd.size()!=4){
     std::cout<<" Warning!! Size of input vector != 4 !! "<<std::endl;
   }
-  TLorentzVector fakeboost(0,0,0,0);
-  Setup(TauA1andProd,fakeboost);
+  TLorentzVector boost = TauA1andProd.at(0);
+  Setup(TauA1andProd,boost,taucharge);
 
 }
 
 void 
-a1Helper::Configure(vector<TLorentzVector> TauA1andProd, TLorentzVector RefernceFrame){
+a1Helper::Configure(vector<TLorentzVector> TauA1andProd, TLorentzVector RefernceFrame, int taucharge){
   if(TauA1andProd.size()!=4){
     std::cout<<" a1 helper:  Warning!! Size of input vector != 4!   Size = "<< TauA1andProd.size()<<std::endl;
   }
-  Setup(TauA1andProd,RefernceFrame);
+  Setup(TauA1andProd,RefernceFrame, taucharge);
 
 }
+
 bool
 a1Helper::isConfigured(){
   if(TauA1andProd_RF.size()!=4){ std::cout<<"Error:   a1Helper is not Configured! Check  the size of input vector!  Size =  "<< TauA1andProd_RF.size() <<std::endl; return false;} return true;
 }
 
-
 a1Helper::~a1Helper(){
 }
-
-
 
 double 
 a1Helper::lambda(double x, double y, double z){
@@ -118,7 +135,7 @@ a1Helper::Boost(TLorentzVector pB, TLorentzVector frame){
    if(frame.Vect().Mag()==0){ std::cout<<"a1Helper  Boost is not set, perfrom calculation in the Lab Frame   "<<std::endl; return pB;}
     if(frame.E()==0){ std::cout<<" Caution: Please check that you perform boost correctly!  " <<std::endl; return pB;} 
    else   b=frame.Vect()*(1/frame.E());
-   vec(0)  = pB.E();    vec(1)  = pB.Px();
+   vec(0)  = pB.E();    vec(1)  = pB.Px(); 
    vec(2)  = pB.Py();  vec(3)  = pB.Pz();
    double gamma  = 1/sqrt( 1 - b.Mag2());
    transform(0,0)=gamma; transform(0,1) =- gamma*b.X() ;  transform(0,2) =  - gamma*b.Y();  transform(0,3) = - gamma*b.Z(); 
@@ -134,7 +151,7 @@ a1Helper::Scalar(TLorentzVector p1, TLorentzVector p2){
 }
 double 
 a1Helper::MomentSFunction(double s, string type){
-  int cells(50);
+  int cells(20);
   //  double s = Q*Q;
   double intx(0);
   double m1 = mpi;
@@ -170,8 +187,6 @@ a1Helper::MomentSFunction(double s, string type){
       m23 = 0.5*(da2 + db2);
       m12 = s +m1*m1 + m2*m2 + m3*m3 - m13 - m23;
       subSetup(m23,m13,m12,sqrt(s)); 
-      // if(s >1.88 && s < 1.90)    std::cout<<"  WD=    "<< WD() << "        m23 = "<< m23 << "       m13= " << m13 <<    "     m12=   "<< m12 << "    sqrts=  " << sqrt(s) <<std::endl;
-      // if(s >1.88 && s < 1.90)    std::cout<<"  F1  "<< F1() << "  F2 "<< F2() << " h0 " << h0()<<    "  VV1()-h()=   "<< VV1()-h() << " VV2() -h()=  " <<VV2()-h() <<std::endl;
       double SFunction(0);
       if(type=="WA")SFunction=WA();
       if(type=="WC")SFunction=WC();
@@ -189,13 +204,11 @@ a1Helper::MomentSFunction(double s, string type){
 	if(m23 > m13)SFunction=WSD();
 	else SFunction=-WSD();
       }
-      //      std::cout<<"SFunction  "<< SFunction<< std::endl;
       inty+=stepx*stepy*SFunction;
     }
     intx+=inty;
   }
   integral = intx;
-  // std::cout<<"check return value  "<< s << "   integral=  " << integral << "  type  "<<   type  << "  :  "<<  WD()<< std::endl;
   subSetup(set.at(0),set.at(1),set.at(2),set.at(3));
 
   return integral;
@@ -232,14 +245,11 @@ double a1Helper::K2bar(double ct, double QQ, int hel){
   double cpsi = (ct*(mtau*mtau  + QQ)   + (mtau*mtau  - QQ))/(ct*(mtau*mtau  - QQ)   + (mtau*mtau  + QQ));
   if(debug){if(std::fabs(cpsi) > 1) std::cout<<"Warning! K1bar: |cpsi| > 1 "<<std::endl;}
   return  K3(ct,QQ,hel)*cpsi  - sqrt(mtau*mtau/QQ/QQ)*sqrt(1-cpsi*cpsi)*sqrt(1-ct*ct)*hel;
-
 }
  
-
-
 double 
 a1Helper::getMoment(double ct, string type, int hel){
-  int cells(50);
+  int cells(20);
   double qqmin  = 0.4;
   double qqmax = 3.0;
   vector<double> set;
@@ -257,30 +267,22 @@ a1Helper::getMoment(double ct, string type, int hel){
     atQQa = qqmin + stepqq*(i-1);
     atQQb = qqmin + stepqq*i;
     atQQ = 0.5*(atQQa + atQQb);
-
     if(type=="one") kern = (2*K1(ct,atQQ,hel) + 3*K2(ct,atQQ,hel))*MomentSFunction(atQQ,"WA");
     if(type=="beta") kern = 0.2*K1bar(ct,atQQ,hel)*MomentSFunction(atQQ,"WA");
     if(type=="c2g") kern = -0.5*K1bar(ct,atQQ,hel)*MomentSFunction(atQQ,"WC");
     if(type=="s2g") kern = 0.5*K1bar(ct,atQQ,hel)*MomentSFunction(atQQ,"WD");
     if(type=="cb") kern = K3bar(ct,atQQ,hel)*MomentSFunction(atQQ,"WE");
-
-
-
     integral += kern*stepqq;
-
   }
   //  subSetup(set.at(0),set.at(1),set.at(2),set.at(3));
   return integral;
 }
  
 
-
-
-//---------------------------------------  hadronic current ---------------------------
+//---------------------------------------  hadronic structure functions (Kuhn Model) ---------------------------
 double 
 a1Helper::WA(){
    return  VV1()*F1().Rho2() + VV2()*F2().Rho2()  + 2*V1V2()*( F1()*Conjugate(F2()) ).Re();
-
  }
 
  double 
@@ -293,13 +295,6 @@ a1Helper::WC(){
    double QQ = _Q*_Q;
    double undersqrt1 = VV1()  -h();
    double undersqrt2 = VV2()  -h();
-
-//   if(undersqrt1 < 0) undersqrt1 =0;
-//   if(undersqrt2 < 0) undersqrt2 =0;
-
-//   std::cout<<" WD(1)  "<< - 2 * sqrt(undersqrt1) * F1().Rho2()*sqrt(h())  << "  WD(2)   "<<sqrt(h())*2*sqrt(undersqrt2)*F2().Rho2()  << "   WD(3)   "<<  -sqrt(h())* (QQ - mpi*mpi + _s3)*(_s1 - _s2 )*( F1()*Conjugate(F2()) ).Re()/QQ/sqrt(h0() ) <<endl;
-  
-
    return  -sqrt(h()) * ( 2 * sqrt(undersqrt1) * F1().Rho2() - 2*sqrt(undersqrt2)*F2().Rho2()  
 			  + (QQ - mpi*mpi + _s3)*(_s1 - _s2 )*( F1()*Conjugate(F2()) ).Re()/QQ/sqrt(h0() ) );
 
@@ -318,8 +313,7 @@ double
  }
 double
  a1Helper::WSB(){
-  //  double QQ = _Q*_Q;
-   double undersqrt1 = VV1()  -h();
+  double undersqrt1 = VV1()  -h();
    double undersqrt2 = VV2()  -h();
    return  -2*_Q* (sqrt(undersqrt1) * (F1()*Conjugate(F4())).Re() +   sqrt(undersqrt2)*(F2()*Conjugate(F4())).Re()  );
  }
@@ -330,8 +324,7 @@ double
  }
 double
  a1Helper::WSC(){
-  //  double QQ = _Q*_Q;
-   double undersqrt1 = VV1()  -h();
+  double undersqrt1 = VV1()  -h();
    double undersqrt2 = VV2()  -h();
    return  2*_Q* (sqrt(undersqrt1) * (F1()*Conjugate(F4())).Im() +   sqrt(undersqrt2)*(F2()*Conjugate(F4())).Im()  );
  }
@@ -346,21 +339,8 @@ double
 double
 a1Helper::cosgammaLF(){
   double QQ=LFQ*LFQ;
-  // double B1 = (pow(_ss1pionLV.E()*_tauLV.E()   - _ss1pionLV.Vect().Dot(_a1LV.Vect()),2 ) - QQ*mpi*mpi)/QQ;
-  // double B2 = (pow(_ss2pionLV.E()*_tauLV.E()   - _ss2pionLV.Vect().Dot(_a1LV.Vect()),2 ) - QQ*mpi*mpi)/QQ;
   double B3 = (pow(LFosPionLV.E()*LFtauLV.E()   - LFosPionLV.Vect().Dot(LFa1LV.Vect()),2 ) - QQ*mpi*mpi)/QQ;
-
-  // double T = 0.5*sqrt(-lambda(B1,B2,B3));
-  // double A1=(_a1LV.E()*_a1LV.Vect().Dot(_ss1pionLV.Vect()) - _ss1pionLV.E()*_a1LV.P()*_a1LV.P())/QQ;
-  // double A2=(_a1LV.E()*_a1LV.Vect().Dot(_ss2pionLV.Vect()) - _ss2pionLV.E()*_a1LV.P()*_a1LV.P())/QQ;
   double A3=(LFa1LV.E() * LFa1LV.Vect().Dot(LFosPionLV.Vect()) - LFosPionLV.E()*LFa1LV.P()*LFa1LV.P()) / LFQ;
-  // std::cout<<"sqrt B3 "<< sqrt(B3)<<std::endl;
-  // std::cout<<"A3 "<< A3<<std::endl;
-
-  // std::cout<< "fuck 1  "   <<LFosPionLV.E()*LFtauLV.E()   - LFosPionLV.Vect().Dot(LFa1LV.Vect())<<std::endl;
-  // std::cout<< "fuck 2  "   <<LFa1LV.E() * LFa1LV.Vect().Dot(LFosPionLV.Vect()) - LFosPionLV.E()*LFa1LV.P()*LFa1LV.P()<<std::endl;
-                                         
-  // std::cout<< "QQ "   << LFQ*LFQ<< "  _Q_Q  "<< _Q*_Q << std::endl;
 
   if(B3<=0 || cosbetaLF() >=1){std::cout<<"Warning! In a1Helper::cosgamma square root <=0! return 0"<<std::endl; return 0;}
   return A3/LFa1LV.P()/sqrt(B3)/sqrt(1 - cosbetaLF()*cosbetaLF());
@@ -376,12 +356,12 @@ a1Helper::singammaLF(){
   double T = 0.5*sqrt(-lambda(B1,B2,B3));
 
   double A1=(LFa1LV.E()*LFa1LV.Vect().Dot(LFss1pionLV.Vect()) - LFss1pionLV.E()*LFa1LV.P()*LFa1LV.P())/QQ;
-  //  double A2=(_a1LV.E()*_a1LV.Vect().Dot(_ss2pionLV.Vect()) - _ss2pionLV.E()*_a1LV.P()*_a1LV.P())/QQ;
+ 
   double A3=(LFa1LV.E()*LFa1LV.Vect().Dot(LFosPionLV.Vect()) - LFosPionLV.E()*LFa1LV.P()*LFa1LV.P())/QQ;
 
   if(A3==0 || T==0){std::cout<<"Warning! In a1Helper::singamma denominator ==0! return 0"<<std::endl; return 0;}
   double scale = -(B3*A1/A3 - 0.5*(B2 - B1 - B3))/T;
-  //  std::cout<<"scale  " << scale <<std::endl;
+ 
   return cosgammaLF()*scale;
 }
 double
@@ -438,21 +418,280 @@ a1Helper::cosbetaLF(){
   TVector3 ss1pionVect = LFss1pionLV.Vect();
   TVector3 ss2pionVect = LFss2pionLV.Vect();
   TVector3 ospionVect = LFosPionLV.Vect();
-  float T = 0.5*sqrt(-lambda(B1,B2,B3));
-  // std::cout<<" B1  " << B1 <<std::endl;
-  // std::cout<<" B2  " << B2 <<std::endl;
-  // std::cout<<" B3  " << B3 <<std::endl;
-  // std::cout<<"-lambda(B1,B2,B3)" << -lambda(B1,B2,B3) <<std::endl;
-  // std::cout<<"  T  " << T <<std::endl;
+  double T = 0.5*sqrt(-lambda(B1,B2,B3));
   if(T==0 || LFa1LV.P()==0){if(debug){std::cout<<" Warning!  Can not compute cosbetaLF, denominator =0; return 0; "<<std::endl;} return 0;}
   return ospionVect.Dot(ss1pionVect.Cross(ss2pionVect)) /LFa1LV.P()/T;
 }
+//------------------------  hadronic current (CLEO model ) -------------
+
+double
+a1Helper::V1(){ 
+  double QQ = _Q*_Q;
+  return  4*mpi*mpi -_s2  - pow(_s3  - _s1,2)/4/QQ;
+}
+
+double
+a1Helper::V2(){ 
+  double QQ = _Q*_Q;
+  return  4*mpi*mpi -_s1  - pow(_s3  - _s2,2)/4/QQ;
+}
+
+
+double
+a1Helper::VV12(){ 
+  double QQ = _Q*_Q;
+  return  -(QQ/2 - _s3 - 0.5*mpi*mpi) - (_s3 - _s1)*(_s3 - _s2)/4/QQ;
+}
+double
+a1Helper::JJ(){
+  double QQ = _Q*_Q;
+  return  (V1()*BreitWigner(sqrt(_s2),"rho").Rho2() + V2()*BreitWigner(sqrt(_s1),"rho").Rho2()  + VV12()*( BreitWigner(sqrt(_s1),"rho")*Conjugate(BreitWigner(sqrt(_s2),"rho")) + BreitWigner(sqrt(_s2),"rho")*Conjugate(BreitWigner(sqrt(_s1),"rho"))  ))*f3(sqrt(QQ)).Rho2();
+}
+
+
+TComplex
+a1Helper::f3(double Q){ 
+  return  (coscab*2*sqrt(2)/3/fpi)*BreitWigner(Q,"a1");
+}
+
+TLorentzVector
+a1Helper::PVC(){ 
+   TLorentzVector q1= _ss1pionLV;
+   TLorentzVector q2= _ss2pionLV;
+   TLorentzVector q3= _osPionLV;
+   TLorentzVector a1 = q1+q2+q3;
+   TLorentzVector N = _nuLV;
+   TLorentzVector P = _tauLV;
+   double s1 = (q2+q3).M2();
+   double s2 = (q1+q3).M2();
+   double s3 = (q1+q2).M2();
+
+
+   TLorentzVector vec1 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
+   TLorentzVector vec2 = q3 - q1 -  a1* (a1*(q3-q1)/a1.M2());
+   TLorentzVector vec3 = q1 - q2 -  a1* (a1*(q1-q2)/a1.M2());
+   
+   TComplex F1 = TComplex(COEF1)*F3PI(1,a1.M2(),s1,s2);
+   TComplex F2 = TComplex(COEF2)*F3PI(2,a1.M2(),s2,s1);
+   TComplex F3 = TComplex(COEF3)*F3PI(3,a1.M2(),s3,s1);
+
+
+   std::vector<TComplex> HADCUR;
+   std::vector<TComplex> HADCURC;
+
+   HADCUR.push_back(TComplex(vec1.E())*F1  + TComplex(vec2.E())*F2   +   TComplex(vec3.E())*F3 ); // energy component goes first
+   HADCUR.push_back(TComplex(vec1.Px())*F1 + TComplex(vec2.Px())*F2  +   TComplex(vec3.Px())*F3 );
+   HADCUR.push_back(TComplex(vec1.Py())*F1 + TComplex(vec2.Py())*F2  +   TComplex(vec3.Py())*F3 );
+   HADCUR.push_back(TComplex(vec1.Pz())*F1 + TComplex(vec2.Pz())*F2  +   TComplex(vec3.Pz())*F3 );
+
+
+   HADCURC.push_back(Conjugate(TComplex(vec1.E())*F1  + TComplex(vec2.E())*F2   +   TComplex(vec3.E())*F3) ); // energy component goes first
+   HADCURC.push_back(Conjugate(TComplex(vec1.Px())*F1 + TComplex(vec2.Px())*F2  +   TComplex(vec3.Px())*F3 ));
+   HADCURC.push_back(Conjugate(TComplex(vec1.Py())*F1 + TComplex(vec2.Py())*F2  +   TComplex(vec3.Py())*F3 ) );
+   HADCURC.push_back(Conjugate(TComplex(vec1.Pz())*F1 + TComplex(vec2.Pz())*F2  +   TComplex(vec3.Pz())*F3) );
+
+   TLorentzVector CLV =  CLVEC(HADCUR,HADCURC,N );
+   TLorentzVector CLA =  CLAXI(HADCUR,HADCURC,N );
+
+   TComplex BWProd1 = f3(a1.M())*BreitWigner(sqrt(s2),"rho");
+   TComplex BWProd2 = f3(a1.M())*BreitWigner(sqrt(s1),"rho");
+ 
+   double omega = P*CLV - P*CLA;
+   return (P.M()*P.M()*  (CLA - CLV)  -  P*(  P*CLA -  P*CLV))*(1/omega/P.M());
+}
+
+TLorentzVector 
+a1Helper::CLVEC(std::vector<TComplex> H, std::vector<TComplex> HC, TLorentzVector N){
+  TComplex HN  = H.at(0)*N.E()     - H.at(1)*N.Px()    - H.at(2)*N.Py()   - H.at(3)*N.Pz();
+  TComplex HCN = HC.at(0)*N.E()    - HC.at(1)*N.Px()   - HC.at(2)*N.Py()  - HC.at(3)*N.Pz();
+  double   HH  = (H.at(0)*HC.at(0) - H.at(1)*HC.at(1)  - H.at(2)*HC.at(2) - H.at(3)*HC.at(3)).Re();
+
+  double PIVEC0 = 2*(   2*(HN*HC.at(0)).Re()  - HH*N.E()   );
+  double PIVEC1 = 2*(   2*(HN*HC.at(1)).Re()  - HH*N.Px()  );
+  double PIVEC2 = 2*(   2*(HN*HC.at(2)).Re()  - HH*N.Py()  );
+  double PIVEC3 = 2*(   2*(HN*HC.at(3)).Re()  - HH*N.Pz()  );
+  return TLorentzVector( PIVEC1, PIVEC2, PIVEC3, PIVEC0);
+}
+
+
+TLorentzVector 
+a1Helper::CLAXI(std::vector<TComplex> H, std::vector<TComplex> HC, TLorentzVector N){
+  TComplex a4 = HC.at(0);   TComplex a1 =  HC.at(1);   TComplex a2 =  HC.at(2);   TComplex a3 =  HC.at(3);
+  TComplex b4 = H.at(0);    TComplex b1 =  H.at(1);    TComplex b2 =  H.at(2);    TComplex b3 =  H.at(3);
+  double   c4 = N.E();      double   c1 =  N.Px();     double   c2 =  N.Py();     double   c3 = N.Pz();   
+  double d34 = (a3*b4 - a4*b3).Im();
+  double d24 = (a2*b4 - a4*b2).Im();  
+  double d23 = (a2*b3 - a3*b2).Im();
+  double d14 = (a1*b4 - a4*b1).Im();
+  double d13 = (a1*b3 - a3*b1).Im();
+  double d12 = (a1*b2 - a2*b1).Im();
+
+  double PIAX0 = -SIGN*2*(-c1*d23 + c2*d13 - c3*d12);
+  double PIAX1 = SIGN*2*( c2*d34 - c3*d24 + c4*d23);
+  double PIAX2 = SIGN*2*(-c1*d34 + c3*d14 - c4*d13);
+  double PIAX3 = SIGN*2*( c1*d24 - c2*d14 + c4*d12);
+
+  return TLorentzVector( PIAX1,PIAX2,PIAX3,PIAX0);
+}
+
+
+TLorentzVector
+a1Helper::PTZ5(TLorentzVector aR, TLorentzVector aI, TLorentzVector bR, TLorentzVector bI, TLorentzVector c){ 
+  TComplex a4(aR.E(), aI.E());  TComplex a1(aR.Px(),aI.Px());   TComplex a2(aR.Py(),aI.Py());   TComplex a3(aR.Pz(),aI.Pz());
+  TComplex b4(bR.E(), bI.E());  TComplex b1(bR.Px(),bI.Px());   TComplex b2(bR.Py(),bI.Py());   TComplex b3(bR.Pz(),bI.Pz());
+
+  double  c1 = c.Px();   double  c2 = c.Py();   double  c3 = c.Pz();   double  c4 = c.E();
+
+  double d34 = (a3*b4 - a4*b3).Im();
+  double d24 = (a2*b4 - a4*b2).Im();  
+  double d23 = (a2*b3 - a3*b2).Im();
+  double d14 = (a1*b4 - a4*b1).Im();
+  double d13 = (a1*b3 - a3*b1).Im();
+  double d12 = (a1*b2 - a2*b1).Im();
+
+  double PIAX1 = 2*( c2*d34 - c3*d24 + c4*d23);
+  double PIAX2 = 2*(-c1*d34 + c3*d14 - c4*d13);
+  double PIAX3 = 2*( c1*d24 - c2*d14 + c4*d12);
+  double PIAX4 = 2*(-c1*d23 + c2*d13 - c3*d12);
+
+  TLorentzVector d(PIAX1,PIAX2,PIAX3,PIAX4);
+  return d;
+}
+
+
+
+TLorentzVector
+a1Helper::PTZ(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1, TLorentzVector N){ 
+  double s1 = (q2+q3).M2();
+  double s2 = (q1+q3).M2();
+  //  double s3 = (q2+q3).M2();
+  
+  TLorentzVector vec1 = q1 - q3 -  a1* (a1*(q1-q3)/a1.M2());
+  TLorentzVector vec2 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
+
+
+
+  TComplex L1 = f3(a1.M())*BreitWigner(sqrt(s2),"rho");
+  TComplex L2 = f3(a1.M())*BreitWigner(sqrt(s1),"rho");
+
+  TComplex CL1 = Conjugate(f3(a1.M())*BreitWigner(sqrt(s2),"rho"));
+  TComplex CL2 = Conjugate(f3(a1.M())*BreitWigner(sqrt(s1),"rho"));
+
+
+
+  TComplex factor1=JCN(q1,q2,q3,a1,N)*L1 + JN(q1,q2,q3,a1,N)*CL1;
+  TComplex factor2=JCN(q1,q2,q3,a1,N)*L2 + JN(q1,q2,q3,a1,N)*CL2;
+
+  TLorentzVector  Ptenz= 2*BreitWigner(sqrt(s1),"rho").Rho2()*(vec2*N)*vec2 + 2*BreitWigner(sqrt(s2),"rho").Rho2()*(vec1*N)*vec1 + 2*(BreitWigner(sqrt(s2),"rho")*Conjugate(BreitWigner(sqrt(s1),"rho"))  ).Re() *((vec1*N)*vec2 + (vec2*N)*vec1) - JJ()*N;
+
+  TLorentzVector out  = 2*(factor1*vec1 + factor2*vec2 - JJ()*N);
+  return out;
+}
+
+
+TComplex
+a1Helper::JN(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1, TLorentzVector N){ 
+  double s1 = (q2+q3).M2();
+  double s2 = (q1+q3).M2();
+
+   
+  TLorentzVector vec1 = q1 - q3 -  a1* (a1*(q1-q3)/a1.M2());
+  TLorentzVector vec2 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
+
+  double prod1 = vec1*N;
+  double prod2 = vec2*N;
+
+  TComplex BWProd1 = f3(a1.M())*BreitWigner(sqrt(s2),"rho");
+  TComplex BWProd2 = f3(a1.M())*BreitWigner(sqrt(s1),"rho");
+
+  TComplex out  = BWProd1*prod1 + BWProd2*prod2;
+  return out;
+}
+TComplex
+a1Helper::JCN(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1, TLorentzVector N){ 
+  double s1 = (q2+q3).M2();
+  double s2 = (q1+q3).M2();
+  
+  TLorentzVector vec1 = q1 - q3 -  a1* (a1*(q1-q3)/a1.M2());
+  TLorentzVector vec2 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
+
+  double prod1 = vec1*N;
+  double prod2 = vec2*N;
+  TComplex BWProd1 = Conjugate(f3(a1.M())*BreitWigner(sqrt(s2),"rho"));
+  TComplex BWProd2 = Conjugate(f3(a1.M())*BreitWigner(sqrt(s1),"rho"));
+  TComplex out  = BWProd1*prod1 + BWProd2*prod2;
+  return out;
+}
+
+TLorentzVector a1Helper::JRe(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1){
+
+  double s1 = (q2+q3).M2();
+  double s2 = (q1+q3).M2();
+  //  double s3 = (q2+q3).M2();
+  
+  TLorentzVector vec1 = q1 - q3 -  a1* (a1*(q1-q3)/a1.M2());
+  TLorentzVector vec2 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
+    
+  TComplex BWProd1 = f3(a1.M())*BreitWigner(sqrt(s2),"rho");
+  TComplex BWProd2 = f3(a1.M())*BreitWigner(sqrt(s1),"rho");
+
+  TLorentzVector out = vec1*BWProd1.Re() + vec2*BWProd2.Re();
+  return out;
+}
+TLorentzVector a1Helper::JIm(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1){
+
+  double s1 = (q2+q3).M2();
+  double s2 = (q1+q3).M2();
+  //  double s3 = (q2+q3).M2();
+  
+  TLorentzVector vec1 = q1 - q3 -  a1* (a1*(q1-q3)/a1.M2());
+  TLorentzVector vec2 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
+    
+  TComplex BWProd1 = f3(a1.M())*BreitWigner(sqrt(s2),"rho");
+  TComplex BWProd2 = f3(a1.M())*BreitWigner(sqrt(s1),"rho");
+
+  TLorentzVector out = vec1*BWProd1.Im() + vec2*BWProd2.Im();
+  return out;
+}
+
+TLorentzVector a1Helper::JCRe(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1){
+
+  double s1 = (q2+q3).M2();
+  double s2 = (q1+q3).M2();
+  //  double s3 = (q2+q3).M2();
+  
+  TLorentzVector vec1 = q1 - q3 -  a1* (a1*(q1-q3)/a1.M2());
+  TLorentzVector vec2 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
+    
+  TComplex BWProd1 = Conjugate(f3(a1.M())*BreitWigner(sqrt(s2),"rho"));
+  TComplex BWProd2 = Conjugate(f3(a1.M())*BreitWigner(sqrt(s1),"rho"));
+  TLorentzVector out = vec1*BWProd1.Re() + vec2*BWProd2.Re();
+  return out;
+}
+TLorentzVector a1Helper::JCIm(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1){
+
+  double s1 = (q2+q3).M2();
+  double s2 = (q1+q3).M2();
+  //  double s3 = (q2+q3).M2();
+  
+  TLorentzVector vec1 = q1 - q3 -  a1* (a1*(q1-q3)/a1.M2());
+  TLorentzVector vec2 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
+    
+  TComplex BWProd1 = Conjugate(f3(a1.M())*BreitWigner(sqrt(s2),"rho"));
+  TComplex BWProd2 = Conjugate(f3(a1.M())*BreitWigner(sqrt(s1),"rho"));
+
+  TLorentzVector out = vec1*BWProd1.Im() + vec2*BWProd2.Im();
+  return out;
+}
+
 
 double
 a1Helper::VV1(){ //  this is -V1^{2}
   double QQ = _Q*_Q;
   return  _s2 - 4*mpi*mpi + pow(_s3 - _s1,2)/4/QQ;
 }
+
+
 
 double
 a1Helper::VV2(){ //  this is -V2^{2}
@@ -480,15 +719,12 @@ a1Helper::h(){
 }
 
 
-
 TComplex 
 a1Helper::F1(){
   TComplex scale(0, -2*sqrt(2)/3/fpi);
   TComplex res = scale*BreitWigner(_Q,"a1")*BRho(sqrt(_s2));
-  //  std::cout<<"  BreitWigner(_Q,a1)  " << BreitWigner(_Q,"a1") << " BRho(_s2)  " << BRho(sqrt(_s2))<< std::endl;
   return res;
 }
-
 
 TComplex 
 a1Helper::F2(){
@@ -504,11 +740,9 @@ a1Helper::F4(){
   return res;
 }
 
-
 TComplex 
 a1Helper::BRho(double Q){
-  //  std::cout<<"BRho:      BreitWigner(Q) " << BreitWigner(Q) << " BreitWigner(Q,rhoprime) " << BreitWigner(Q,"rhoprime")<< std::endl;
-  return (BreitWigner(Q) + beta*BreitWigner(Q,"rhoprime"))/(1+beta);
+   return (BreitWigner(Q) + beta*BreitWigner(Q,"rhoprime"))/(1+beta);
 }
 
 TComplex 
@@ -517,11 +751,9 @@ a1Helper::BreitWigner(double Q, string type){
   double re,im;
   double m = Mass(type);
   double g  = Widths(Q,type);
-  // re = (m*m*pow(m*m - QQ,2))/(pow(m*m - QQ,2) + m*m*g*g); // 
-  // im = m*m*m*g/(pow(m*m - QQ,2) + m*m*g*g);
-  re = (m*m*(m*m - QQ))/(pow(m*m - QQ,2) + Q*Q*g*g);
-  im = Q*g/(pow(m*m - QQ,2) + Q*Q*g*g);
-
+  re = (m*m*(m*m - QQ))/(pow(m*m - QQ,2) + m*m*g*g);
+  im = Q*g/(pow(m*m - QQ,2) + m*m*g*g);
+ 
 
   TComplex out(re,im);
   return out;
@@ -536,13 +768,12 @@ a1Helper::Widths(double Q, string type){
     Gamma=Gamma0rhoprime*QQ/mrhoprime/mrhoprime;
  }
   if(type == "a1"){
-    //    Gamma=Gamma0a1*ga1(Q)/ga1(ma1);
-    Gamma=Gamma0a1*ma1*ga1(Q)/ga1(ma1)/Q;
+    Gamma=Gamma0a1*ga1(Q)/ga1(ma1);
+    //    Gamma=Gamma0a1*ma1*ga1(Q)/ga1(ma1)/Q;
  }
   if(type == "piprime"){
     Gamma = Gamma0piprime*pow( sqrt(QQ)/mpiprime  ,5)*pow( (1-mrho*mrho/QQ)/(1-mrho*mrho/mpiprime/mpiprime) ,3);
   }
-  //  std::cout<< " Widths :   type   " << type << " Gamma  " << Gamma << "  QQ  "<< QQ <<std::endl;
   return Gamma;
 }
 double a1Helper::ga1(double  Q){
@@ -555,7 +786,6 @@ a1Helper::Mass(string type){
   if(type == "rhoprime") return mrhoprime; 
   if(type == "a1") return ma1;
   if(type == "piprime") return mpiprime;
-  //std::cout<< "  type   " << type << " Mass  " << std::endl;
   return m;
 }
 
@@ -592,9 +822,8 @@ double a1Helper::ppi(double QQ){  if(QQ < 4*mpi*mpi) std::cout<<"Warning! Can no
 
  double a1Helper::vgetf(TString type){
    double QQ=_Q*_Q;
-   double RR  = mtau*mtau/QQ;
-   //double R = sqrt(RR);
-   float U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
+   double RR  = mtau*mtau/QQ; 
+   double U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
    double B = 0.5*(3*cosbeta()*cosbeta() - 1);
 
    double fA =  WA()*(2+RR + B*U)/3;
@@ -611,14 +840,14 @@ double a1Helper::ppi(double QQ){  if(QQ < 4*mpi*mpi) std::cout<<"Warning! Can no
  double a1Helper::vgetg(TString type){
    double QQ=_Q*_Q;
    double RR  = mtau*mtau/QQ; double R = sqrt(RR);
-   //float U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
-   float V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*R;
+   //double U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
+   double V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*R;
    double B = 0.5*(3*cosbeta()*cosbeta() - 1);
    double fact =0;
    if(type == "bar") fact =1;
-   double gA =  WA()*(costhetaLF()*(RR - 2)   - B*V)/3                                                               +     fact*WA()*0.5*R*sinthetaLF()*cosalpha()*2*sinbeta()*cosbeta();
-   double gC =  WC()*0.5*V*sinbeta()*sinbeta()* cos2gamma()                                                 -      fact*WC()*R*sinthetaLF()*sinbeta()*(sinalpha()*sin2gamma()  -  cos2gamma()*cosalpha()*cosbeta() ) ;
-   double gD = -WD()*0.5*V*sinbeta()*sinbeta()* sin2gamma()                                                 -      fact*WD()*R*sinthetaLF()*sinbeta()*(sinalpha()*cos2gamma() + sin2gamma()* cosalpha()*cosbeta()  );
+   double gA =  WA()*(costhetaLF()*(RR - 2)   - B*V)/3                                             +     fact*WA()*0.5*R*sinthetaLF()*cosalpha()*2*sinbeta()*cosbeta();
+   double gC =  WC()*0.5*V*sinbeta()*sinbeta()* cos2gamma()                                        -     fact*WC()*R*sinthetaLF()*sinbeta()*(sinalpha()*sin2gamma()  -  cos2gamma()*cosalpha()*cosbeta() ) ;
+   double gD = -WD()*0.5*V*sinbeta()*sinbeta()* sin2gamma()                                        -     fact*WD()*R*sinthetaLF()*sinbeta()*(sinalpha()*cos2gamma() + sin2gamma()* cosalpha()*cosbeta()  );
    double gE = - WE()*cosbeta()*( costhetaLF()*cospsiLF() + R*sinthetaLF()*sinpsiLF())             +     fact*WE()*R*sinthetaLF()*sinbeta()*cosalpha();
 
 
@@ -628,10 +857,9 @@ double a1Helper::ppi(double QQ){  if(QQ < 4*mpi*mpi) std::cout<<"Warning! Can no
 
  double a1Helper::vgetfscalar(TString type){
    double QQ=_Q*_Q;
-   double RR  = mtau*mtau/QQ;
-   //double R = sqrt(RR);
-   float U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
-   //float V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*R;
+   double RR  = mtau*mtau/QQ; 
+   double U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
+   // double V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*R;
    double B = 0.5*(3*cosbeta()*cosbeta() - 1);
 
    double fA =  WA()*(2+RR + B*U)/3;
@@ -651,22 +879,17 @@ double a1Helper::ppi(double QQ){  if(QQ < 4*mpi*mpi) std::cout<<"Warning! Can no
  double a1Helper::vgetgscalar(TString type){
    double QQ=_Q*_Q;
    double RR  = mtau*mtau/QQ; double R = sqrt(RR);
-   //float U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
-   float V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*R;
+   //   double U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
+   double V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*R;
    double B = 0.5*(3*cosbeta()*cosbeta() - 1);
    double fact =0;
    if(type == "bar") fact =1;
 
   
-   double gA =  WA()*(costhetaLF()*(RR - 2)   - B*V)/3                                                               +     fact*WA()*0.5*R*sinthetaLF()*cosalpha()*2*sinbeta()*cosbeta();
-   double gC =  WC()*0.5*V*sinbeta()*sinbeta()* cos2gamma()                                                 -      fact*WC()*R*sinthetaLF()*sinbeta()*(sinalpha()*sin2gamma()  -  cos2gamma()*cosalpha()*cosbeta() ) ;
-   double gD = -WD()*0.5*V*sinbeta()*sinbeta()* sin2gamma()                                                 -      fact*WD()*R*sinthetaLF()*sinbeta()*(sinalpha()*cos2gamma() + sin2gamma()* cosalpha()*cosbeta()  );
+   double gA =  WA()*(costhetaLF()*(RR - 2)   - B*V)/3                                             +     fact*WA()*0.5*R*sinthetaLF()*cosalpha()*2*sinbeta()*cosbeta();
+   double gC =  WC()*0.5*V*sinbeta()*sinbeta()* cos2gamma()                                        -     fact*WC()*R*sinthetaLF()*sinbeta()*(sinalpha()*sin2gamma()  -  cos2gamma()*cosalpha()*cosbeta() ) ;
+   double gD = -WD()*0.5*V*sinbeta()*sinbeta()* sin2gamma()                                        -     fact*WD()*R*sinthetaLF()*sinbeta()*(sinalpha()*cos2gamma() + sin2gamma()* cosalpha()*cosbeta()  );
    double gE = - WE()*cosbeta()*( costhetaLF()*cospsiLF() + R*sinthetaLF()*sinpsiLF())             +     fact*WE()*R*sinthetaLF()*sinbeta()*cosalpha();
-   //double gSA =WSA()*RR*costhetaLF();
-   //double gSB =WSB()*R*(R*cospsiLF()*costhetaLF()*sinbeta()*cosgamma() + sinthetaLF()* ( sinpsiLF()*sinbeta()*cosgamma()  -  cosbeta()* cosalpha()* cosgamma() + sinalpha()*singamma())   );
-   //double gSC = WSC()*R*sinthetaLF()*(cosbeta()*sinalpha()*cosgamma() + cosalpha()*singamma());
-   //double gSD = WSD()*R*(sinthetaLF()*(cosbeta()*cosalpha()*singamma() + sinalpha()*cosgamma() - sinpsiLF()*sinbeta()*singamma()  )      - R*costhetaLF()*cospsiLF()*sinbeta()*singamma() );
-   //double gSE = -WSE()*R*sinthetaLF()*(cosbeta()*sinalpha()*singamma() -  cosalpha()*cosgamma());
    double res = gA+gC+gD+gE;
 
    return res;
@@ -674,17 +897,10 @@ double a1Helper::ppi(double QQ){  if(QQ < 4*mpi*mpi) std::cout<<"Warning! Can no
 
  double a1Helper::TRF_vgetf(TString type){
    double QQ=_Q*_Q;
-   double RR  = mtau*mtau/QQ;
-   //double R = sqrt(RR);
+   double RR  = mtau*mtau/QQ; 
 
-   double cb = TRF_cosbeta();
-   //double ct = costhetaLF();
-   //double ca = TRF_cosalpha();
-   double cg = TRF_cosgamma();  
-   double sb = TRF_sinbeta();
-   //double st =  sinthetaLF();
-   //double sa = TRF_sinalpha();
-   double sg = TRF_singamma();  
+   double cb = TRF_cosbeta();     double cg = TRF_cosgamma();  
+   double sb = TRF_sinbeta();     double sg = TRF_singamma();  
    double s2g  = 2*sg*cg; double c2g = cg*cg - sg*sg;
    double Bb = 0.5*(cb*cb + 1);
    double fact=0;
@@ -710,8 +926,7 @@ double a1Helper::ppi(double QQ){  if(QQ < 4*mpi*mpi) std::cout<<"Warning! Can no
    double cb = TRF_cosbeta();     double ct = costhetaLF();    double ca = TRF_cosalpha();   double cg = TRF_cosgamma();  
    double sb = TRF_sinbeta();     double st = sinthetaLF();    double sa = TRF_sinalpha();   double sg = TRF_singamma();  
    double s2g  = 2*sg*cg; double c2g = cg*cg - sg*sg;
-   double s2b  = 2*sb*cb;
-   //double c2b = cb*cb - sb*sb;
+   double s2b  = 2*sb*cb; 
    double Bb = 0.5*(cb*cb + 1);
    double fact=0;
    if(type=="scalar") fact=1;
@@ -726,59 +941,18 @@ double a1Helper::ppi(double QQ){  if(QQ < 4*mpi*mpi) std::cout<<"Warning! Can no
    double gSC = WSC()*R*st*(cb*sa*cg + ca*sg);
    double gSD = WSD()*(R*st*(cb*ca*sg + sa*cg) - RR*ct*sb*sg);
    double gSE = -WSE()*R*st*(cb*sa*sg - ca*cg);
-
    double res = gA+gC+gD+gE+  fact*(gSA + gSB + gSC+ gSD + gSE);
-
    return res;
  }
-
-void a1Helper::debugger(){
-   double QQ=_Q*_Q;
-   double RR  = mtau*mtau/QQ; double R = sqrt(RR);
-
-   double cb = TRF_cosbeta();     double ct = costhetaLF();    double ca = TRF_cosalpha();   double cg = TRF_cosgamma();  
-   double sb = TRF_sinbeta();     double st =  sinthetaLF();    double sa = TRF_sinalpha();   double sg = TRF_singamma();  
-   double s2g  = 2*sg*cg; double c2g = cg*cg - sg*sg;
-   double Bb = 0.5*(cb*cb + 1);
-
-   double fA =  WA()*(Bb*(1 - RR) + RR);
-   double fC = -WC()*0.5*sb*sb*c2g*(1- RR);
-   double fD = WD()*0.5*(1-RR)*sb*sb*s2g;
-   double fE =  WE()*cb;
-   //double fSA = WSA()*RR;
-   //double fSB = WSB()*RR*sb*cg;
-   //double fSC = 0;
-   //double fSD = -WSD()*RR*sb*sg;
-   //double fSE = 0;
-   double s2b  = 2*sb*cb;
-   //double c2b = cb*cb - sb*sb;
-
- 
-   double gA =  WA()*(RR*ct - Bb*ct*(1+RR)) + WA()*0.5*R*st*s2b*ca ;
-   double gC = WC()*(ct*(1+RR)  *s2b*c2g)  - WC()*R*st*sb*( sa*s2g - c2g*ca*cb    );
-   double gD = -WD()*(ct*(1+RR)*sb*sb*s2g) +WD()* R*st*sb*( sa*c2g + s2g*ca*cb  );
-   double gE =  WE()*(R*st*sb*ca) - WE()*ct*cb;
-
-   //double gSA = WSA()*RR*ct;
-   //double gSB = WSB()*(RR*ct*sb*sg - R*st*(cb*ca*cg - sa*sg  ));
-   //double gSC = WSC()*R*st*(cb*sa*cg + ca*sg);
-   //double gSD = WSD()*(R*st*(cb*ca*sg + sa*cg) - RR*ct*sb*sg);
-   //double gSE = -WSE()*st*(cb*sa*sg - ca*cg);
-
-   std::cout<<"  TRF_f"<<std::endl; 
-   std::cout<<" fa + fc + fd + fe   "<< fA+fC+fD+fE;  std::cout<<"   TRF g non alpha   "<< WA()*(RR*ct - Bb*ct*(1+RR))+  WC()*(ct*(1+RR)  *s2b*c2g) -WD()*(ct*(1+RR)*sb*sb*s2g)- WE()*ct*cb <<std::endl;
-   std::cout<<" fA   "<<  fA   << "    gA  + gAa  " << WA()*(RR*ct - Bb*ct*(1+RR)) <<"  +  " << WA()*0.5*R*st*s2b*ca<<std::endl;
-   std::cout<<" fC  "<<  fC   << "     gC  + gCa  " <<  WC()*(ct*(1+RR)  *s2b*c2g) <<"  +  " << - WC()*R*st*sb*( sa*s2g - c2g*ca*cb    )<<std::endl;
-   std::cout<<" fD    "<<  fD   << "    gD  + gDa " << -WD()*(ct*(1+RR)*sb*sb*s2g)<<"  +  " << WD()* R*st*sb*( sa*c2g + s2g*ca*cb  )<<std::endl;
-   std::cout<<" fE    "<<  fE   << "    gE  + gEa  " << - WE()*ct*cb<<"  +  " << WE()*(R*st*sb*ca)<<std::endl;
-
-   std::cout<<"  TRF_g"<<std::endl; 
-   std::cout<<" ga + gc + gd + ge   "<< gA+gC+gD+gE<<std::endl;
-}
 
 double a1Helper::TRF_vgetA1omega(TString type){
   if(TRF_vgetf(type)==0){ if(debug){std::cout<<"Warning!  Can not return vomegascalar; f(0)=0; return -50;  "<<std::endl;} return -50;}
   return TRF_vgetg(type)/TRF_vgetf(type);
+}
+
+double a1Helper::result(){
+  //  PolarimetricVector().Vect().Print();
+   return nTZLFr()*PVC().Vect();
 }
 
 
@@ -790,23 +964,24 @@ double a1Helper::vgetA1omega(TString type){
   if(vgetf(type)==0){ if(debug){std::cout<<"Warning!  Can not return vomega; f(0)=0; return -5;  "<<std::endl; }return -5;}
   return vgetg(type)/vgetf(type);
 }
-double a1Helper::getA1omegaBar(){
-  if(getf()==0){ if(debug){std::cout<<"Warning!  Can not return omega; f(0)=0; return -5;  "<<std::endl;} return -5;}
-  return getg()/getf();
+double a1Helper::getOmegaA1Bar(){
+  // if(getf()==0){ if(debug){std::cout<<"Warning!  Can not return omega; f(0)=0; return -5;  "<<std::endl;} return -5;}
+  // return getg()/getf();
+  return nTZLFr()*PVC().Vect();
 }
 double
-a1Helper::getA1omega(){
+a1Helper::getOmegaA1(){
   double QQ=_Q*_Q;
   double RR  = mtau*mtau/QQ;
-  float U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
-  float V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*sqrt(RR);
+  double U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
+  double V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*sqrt(RR);
   
-  float fa1 = (2  + RR + 0.5*(3*cosbeta()*cosbeta()- 1)*U)*WA()/3 - 0.5*sinbeta()*sinbeta()*cos2gamma()*U*WC() + 0.5*sinbeta()*sinbeta()*sin2gamma()*U*WD() + cospsiLF()*cosbeta()*WE();
-  float ga1 = (costhetaLF()*(RR -2) - 0.5*(3*cosbeta()*cosbeta() - 1)*V)*WA()/3 + 0.5*sinbeta()*sinbeta()*cos2gamma()*V*WC() - 0.5*sinbeta()*sinbeta()*sin2gamma()*V*WD() -cosbeta()*(costhetaLF()*cospsiLF() + sinthetaLF()*sinpsiLF()*sqrt(RR))*WE();
+  double fa1 = (2  + RR + 0.5*(3*cosbeta()*cosbeta()- 1)*U)*WA()/3 - 0.5*sinbeta()*sinbeta()*cos2gamma()*U*WC() + 0.5*sinbeta()*sinbeta()*sin2gamma()*U*WD() + cospsiLF()*cosbeta()*WE();
+  double ga1 = (costhetaLF()*(RR -2) - 0.5*(3*cosbeta()*cosbeta() - 1)*V)*WA()/3 + 0.5*sinbeta()*sinbeta()*cos2gamma()*V*WC() - 0.5*sinbeta()*sinbeta()*sin2gamma()*V*WD() -cosbeta()*(costhetaLF()*cospsiLF() + sinthetaLF()*sinpsiLF()*sqrt(RR))*WE();
 
   double omega = ga1/fa1;
-  if(omega > 0 or omega < 0) 	return omega;
-  return -999;
+  if(std::isinf(std::fabs(omega)) || std::isnan(std::fabs(omega))) omega  = -999.;
+  return omega;
 }
 TLorentzVector
 a1Helper::sLV(){
@@ -815,7 +990,6 @@ a1Helper::sLV(){
   double l   = 0.5*(mtau*mtau  - QQ)/sqrt(QQ);
   return TLorentzVector(sinthetaLF(),0,-l0*costhetaLF()/mtau,-l*costhetaLF()/mtau);
 }
-
 
 TVector3
 a1Helper::nPerp(){
@@ -838,7 +1012,10 @@ TVector3
 a1Helper::nT(){
   return   _tauLV.Vect()*(1/_tauLV.Vect().Mag());
 }
-
+TVector3
+a1Helper::nTZLFr(){
+  return _tauAlongZLabFrame.Vect()*(1/_tauAlongZLabFrame.Vect().Mag());
+}
 
 double  
 a1Helper::TRF_cosalpha(){
@@ -852,12 +1029,9 @@ double
 a1Helper::TRF_sinalpha(){
    TVector3 nTCrossns  = nT().Cross(ns());
    TVector3 nTCrossnPerp  = nT().Cross(nPerp());
-
    if(nTCrossns.Mag() ==0 || nTCrossnPerp.Mag() ==0){if(debug){std::cout<<" Can not compute sin alpha, one denominator is 0, return TRF sin alpha =0  "<< std::endl; }return 0;}
   return -ns().Dot(nTCrossnPerp)/nTCrossns.Mag()/nTCrossnPerp.Mag();
-
 }
-
 
 double a1Helper::TRF_cosbeta(){
   return nT().Dot(nPerp());
@@ -871,7 +1045,6 @@ double a1Helper::TRF_cosgamma(){
   TVector3 nTCrossnPerp  = nT().Cross(nPerp());
 
   TVector3 qvect = _osPionLV.Vect()*(1/_osPionLV.Vect().Mag());
-  //  qvect.Print();
   if(nTCrossnPerp.Mag()==0) { if(debug){std::cout<<"Warning! Can not compute TRF cos gamma, denominator =0, return 0  "<< std::endl;} return 0; }
   return -nT()*qvect/nTCrossnPerp.Mag();
 }
@@ -884,9 +1057,6 @@ double a1Helper::TRF_singamma(){
   return qvect*nTCrossnPerp/nTCrossnPerp.Mag();
 }
 
-
- // double  TRF_cosbeta();      double  TRF_cosalpha();   double  TRF_cosgamma();  
- // double TRF_sinbeta();        double TRF_sinalpha();    double  TRF_singamma();  
 
 double a1Helper::cosalpha(){
    TVector3 nLCrossnT  = nL().Cross(nT());
@@ -926,8 +1096,6 @@ double a1Helper::singamma(){
   return qvect*nLCrossnPerp/nLCrossnPerp.Mag();
 }
 
-
-
 TComplex 
 a1Helper::Conjugate(TComplex a){
   return TComplex(a.Re(), -a.Im());
@@ -937,4 +1105,299 @@ TMatrixT<double> a1Helper::convertToMatrix(TVectorT<double> V){
   for(int i=0; i < M.GetNrows(); i++){
     M(i,0)=V(i);
   } return M;
+}
+TVector3
+a1Helper::Rotate(TVector3 LVec, TVector3 Rot){
+  TVector3 vec = LVec;
+  vec.RotateZ(0.5*TMath::Pi() - Rot.Phi());  
+  vec.RotateX(Rot.Theta());
+  return vec;
+}
+
+//------- L-wave BreightWigner for rho
+TComplex 
+a1Helper::BWIGML(double S, double M,  double G, double m1, double m2, int L){
+  int IPOW;
+  double MP = pow(m1+m2,2);
+  double MM = pow(m1-m2,2);
+  double MSQ = M*M;
+  double W = sqrt(S);
+  double WGS =0.0;
+  double QS,QM;
+  if(W > m1+m2){
+    QS = sqrt(std::fabs( (S  - MP)*(S  - MM)))/W;
+    QM = sqrt(std::fabs( (MSQ - MP)*(MSQ - MM)))/M;
+    IPOW = 2*L +1;
+    WGS=G*(MSQ/W)*pow(QS/QM, IPOW);
+  }
+
+ TComplex out;
+ out = TComplex(MSQ,0)/TComplex(MSQ - S, -WGS) ;
+ return out;
+}
+
+TComplex
+a1Helper::FPIKM(double W, double XM1, double XM2){
+  double ROM  = 0.773;
+  double ROG  = 0.145;
+  double ROM1 = 1.370;
+  double ROG1 = 0.510;
+  double BETA1=-0.145;
+  
+  double S=W*W;
+  int L =1; // P-wave
+  TComplex out = (BWIGML(S,ROM,ROG,XM1,XM2,L) + BETA1*BWIGML(S,ROM1,ROG1,XM1,XM2,L))/(1+BETA1);
+  return out;
+} 
+
+
+TComplex
+a1Helper::F3PI(double IFORM,double QQ,double SA,double SB){
+  double MRO = 0.7743;
+  double GRO = 0.1491;
+  double MRP = 1.370 ;
+  double GRP = 0.386 ;
+  double MF2 = 1.275;
+  double GF2 = 0.185;
+  double MF0 = 1.186;
+  double GF0 = 0.350;
+  double MSG = 0.860;
+  double GSG = 0.880;
+  double MPIZ = mpi0;
+  double MPIC = mpi;
+  double M1;
+  double M2;
+  double M3;
+  int IDK =2;  // --------- it is 3pi
+  if(IDK ==1){
+    M1=MPIZ;
+    M2=MPIZ;
+    M3=MPIC;
+  }
+  if(IDK==2){
+    M1=MPIC;
+    M2=MPIC;
+    M3=MPIC;
+  }
+
+ 
+  double M1SQ = M1*M1;
+  double M2SQ = M2*M2;
+  double M3SQ = M3*M3;
+  
+  
+  TComplex  BT1 = TComplex(1.,0.);
+  TComplex  BT2 = TComplex(0.12,0.)*TComplex(1, 0.99*TMath::Pi(), true);//  TComplex(1, 0.99*TMath::Pi(), true);   Real part must be equal to one, stupid polar implemenation in root
+  TComplex  BT3 = TComplex(0.37,0.)*TComplex(1, -0.15*TMath::Pi(), true);
+  TComplex  BT4 = TComplex(0.87,0.)*TComplex(1, 0.53*TMath::Pi(), true);
+  TComplex  BT5 = TComplex(0.71,0.)*TComplex(1, 0.56*TMath::Pi(), true);
+  TComplex  BT6 = TComplex(2.10,0.)*TComplex(1, 0.23*TMath::Pi(), true);
+  TComplex  BT7 = TComplex(0.77,0.)*TComplex(1, -0.54*TMath::Pi(), true);
+
+  TComplex  F3PIFactor(0.,0.); // initialize to zero
+  if(IDK == 2){
+    if(IFORM == 1 || IFORM == 2 ){
+      double S1 = SA;
+      double S2 = SB;
+      double S3 = QQ-SA-SB+M1SQ+M2SQ+M3SQ;
+      //Lorentz invariants for all the contributions:
+      double F134 = -(1./3.)*((S3-M3SQ)-(S1-M1SQ));
+      double F15A = -(1./2.)*((S2-M2SQ)-(S3-M3SQ));
+      double F15B = -(1./18.)*(QQ-M2SQ+S2)*(2.*M1SQ+2.*M3SQ-S2)/S2;
+      double F167 = -(2./3.);
+      
+      // Breit Wigners for all the contributions:
+      
+      
+      TComplex  FRO1 = BWIGML(S1,MRO,GRO,M2,M3,1);
+      TComplex  FRP1 = BWIGML(S1,MRP,GRP,M2,M3,1);
+      TComplex  FRO2 = BWIGML(S2,MRO,GRO,M3,M1,1);
+      TComplex  FRP2 = BWIGML(S2,MRP,GRP,M3,M1,1);
+      TComplex  FF21 = BWIGML(S1,MF2,GF2,M2,M3,2);
+      TComplex  FF22 = BWIGML(S2,MF2,GF2,M3,M1,2);
+      TComplex  FSG2 = BWIGML(S2,MSG,GSG,M3,M1,0);
+      TComplex  FF02 = BWIGML(S2,MF0,GF0,M3,M1,0);
+      
+      
+      F3PIFactor = BT1*FRO1+BT2*FRP1+
+	BT3*TComplex(F134,0.)*FRO2+BT4*TComplex(F134,0.)*FRP2
+	-BT5*TComplex(F15A,0.)*FF21-BT5*TComplex(F15B,0.)*FF22
+	-BT6*TComplex(F167,0.)*FSG2-BT7*TComplex(F167,0.)*FF02;
+      
+    } else if (IFORM == 3 ){
+      
+      double S3 = SA;
+      double S1 = SB;
+      double S2 = QQ-SA-SB+M1SQ+M2SQ+M3SQ;
+      
+      double F34A = (1./3.)*((S2-M2SQ)-(S3-M3SQ));
+      double F34B = (1./3.)*((S3-M3SQ)-(S1-M1SQ));
+      double F35A = -(1./18.)*(QQ-M1SQ+S1)*(2.*M2SQ+2.*M3SQ-S1)/S1;
+      double F35B =  (1./18.)*(QQ-M2SQ+S2)*(2.*M3SQ+2.*M1SQ-S2)/S2;
+      double F36A = -(2./3.);
+      double F36B =  (2./3.);
+      
+      //C Breit Wigners for all the contributions:
+      TComplex  FRO1 = BWIGML(S1,MRO,GRO,M2,M3,1);
+      TComplex  FRP1 = BWIGML(S1,MRP,GRP,M2,M3,1);
+      TComplex  FRO2 = BWIGML(S2,MRO,GRO,M3,M1,1);
+      TComplex  FRP2 = BWIGML(S2,MRP,GRP,M3,M1,1);
+      TComplex  FF21 = BWIGML(S1,MF2,GF2,M2,M3,2);
+      TComplex  FF22 = BWIGML(S2,MF2,GF2,M3,M1,2);
+      TComplex  FSG1 = BWIGML(S1,MSG,GSG,M2,M3,0);
+      TComplex  FSG2 = BWIGML(S2,MSG,GSG,M3,M1,0);
+      TComplex  FF01 = BWIGML(S1,MF0,GF0,M2,M3,0);
+      TComplex  FF02 = BWIGML(S2,MF0,GF0,M3,M1,0);
+      
+      F3PIFactor = 
+	BT3*(TComplex(F34A,0.)*FRO1+TComplex(F34B,0.)*FRO2)+
+	BT4*(TComplex(F34A,0.)*FRP1+TComplex(F34B,0.)*FRP2)
+	-BT5*(TComplex(F35A,0.)*FF21+TComplex(F35B,0.)*FF22)
+	-BT6*(TComplex(F36A,0.)*FSG1+TComplex(F36B,0.)*FSG2)
+	-BT7*(TComplex(F36A,0.)*FF01+TComplex(F36B,0.)*FF02);
+      
+      // F3PIFactor = TComplex(0.,0.);
+    }
+  }
+  
+  if(IDK==1){
+   if(IFORM == 1 || IFORM == 2 ){
+     double  S1 = SA;
+     double  S2 = SB;
+     double  S3 = QQ-SA-SB+M1SQ+M2SQ+M3SQ;
+
+// C it is 2pi0pi-
+// C Lorentz invariants for all the contributions:
+    double   F134 = -(1./3.)*((S3-M3SQ)-(S1-M1SQ));
+    double   F150 =  (1./18.)*(QQ-M3SQ+S3)*(2.*M1SQ+2.*M2SQ-S3)/S3;
+    double   F167 =  (2./3.);
+
+    //C Breit Wigners for all the contributions:
+    TComplex FRO1 = BWIGML(S1,MRO,GRO,M2,M3,1);
+    TComplex FRP1 = BWIGML(S1,MRP,GRP,M2,M3,1);
+    TComplex FRO2 = BWIGML(S2,MRO,GRO,M3,M1,1);
+    TComplex FRP2 = BWIGML(S2,MRP,GRP,M3,M1,1);
+    TComplex FF23 = BWIGML(S3,MF2,GF2,M1,M2,2);
+    TComplex FSG3 = BWIGML(S3,MSG,GSG,M1,M2,0);
+    TComplex FF03 = BWIGML(S3,MF0,GF0,M1,M2,0);
+
+    F3PIFactor = BT1*FRO1+BT2*FRP1+
+      BT3*TComplex(F134,0.)*FRO2+BT4*TComplex(F134,0.)*FRP2+
+      BT5*TComplex(F150,0.)*FF23+
+      BT6*TComplex(F167,0.)*FSG3+BT7*TComplex(F167,0.)*FF03;
+   }
+   else if (IFORM == 3 ){
+     double   S3 = SA;
+     double   S1 = SB;
+     double   S2 = QQ-SA-SB+M1SQ+M2SQ+M3SQ;
+      
+     double F34A = (1./3.)*((S2-M2SQ)-(S3-M3SQ));
+     double F34B = (1./3.)*((S3-M3SQ)-(S1-M1SQ));
+     double F35  =-(1./2.)*((S1-M1SQ)-(S2-M2SQ));
+
+     //C Breit Wigners for all the contributions:
+     TComplex FRO1 = BWIGML(S1,MRO,GRO,M2,M3,1);
+     TComplex FRP1 = BWIGML(S1,MRP,GRP,M2,M3,1);
+     TComplex FRO2 = BWIGML(S2,MRO,GRO,M3,M1,1);
+     TComplex FRP2 = BWIGML(S2,MRP,GRP,M3,M1,1);
+     TComplex FF23 = BWIGML(S3,MF2,GF2,M1,M2,2);
+
+     F3PIFactor = 
+       BT3*(TComplex(F34A,0.)*FRO1+TComplex(F34B,0.)*FRO2)+
+       BT4*(TComplex(F34A,0.)*FRP1+TComplex(F34B,0.)*FRP2)+
+       BT5*TComplex(F35,0.)*FF23;
+     
+   }
+  }
+  TComplex FORMA1 = FA1A1P(QQ);
+  TComplex F3PIFactor_ret =  F3PIFactor*FORMA1;
+  return F3PIFactor_ret;
+} 
+
+
+TComplex
+a1Helper::FA1A1P(double XMSQ){
+  double  XM1 = 1.275000;
+  double  XG1 =0.700 ; 
+  double  XM2 = 1.461000 ;
+  double  XG2 = 0.250; 
+  TComplex BET = TComplex(0.00,0.);
+
+  double GG1 = XM1*XG1/(1.3281*0.806);
+  double GG2 = XM2*XG2/(1.3281*0.806);
+  double XM1SQ = XM1*XM1;
+  double XM2SQ = XM2*XM2;
+
+  double GF = WGA1(XMSQ);
+  double FG1 = GG1*GF;
+  double FG2 = GG2*GF;
+  TComplex F1 = TComplex(-XM1SQ,0.0)/TComplex(XMSQ-XM1SQ,FG1);
+  TComplex F2 = TComplex(-XM2SQ,0.0)/TComplex(XMSQ-XM2SQ,FG2);
+  TComplex FA1A1P = F1+BET*F2;
+
+  return FA1A1P;
+}
+
+
+double 
+a1Helper::WGA1(double QQ){
+// C mass-dependent M*Gamma of a1 through its decays to 
+// C.   [(rho-pi S-wave) + (rho-pi D-wave) + 
+// C.    (f2 pi D-wave) + (f0pi S-wave)]
+// C.  AND simple K*K S-wave
+  double  MKST = 0.894;
+  double  MK = 0.496;
+  double  MK1SQ = (MKST+MK)*(MKST+MK);
+  double  MK2SQ = (MKST-MK)*(MKST-MK);
+  //C coupling constants squared:
+  double   C3PI = 0.2384*0.2384;
+  double   CKST = 4.7621*4.7621*C3PI;
+// C Parameterization of numerical integral of total width of a1 to 3pi.
+// C From M. Schmidtler, CBX-97-64-Update.
+  double  S = QQ;
+  double  WG3PIC = WGA1C(S);
+  double  WG3PIN = WGA1N(S);
+
+  //C Contribution to M*Gamma(m(3pi)^2) from S-wave K*K, if above threshold
+  double  GKST = 0.0;
+  if(S > MK1SQ) GKST = sqrt((S-MK1SQ)*(S-MK2SQ))/(2.*S);
+
+  double WGA1_ret = C3PI*(WG3PIC+WG3PIN)+CKST*GKST;
+  return WGA1_ret;
+}
+
+
+double
+a1Helper::WGA1C(double S){
+  double STH,Q0,Q1,Q2,P0,P1,P2,P3,P4,G1_IM;
+  Q0 =   5.80900; Q1 =  -3.00980; Q2 =   4.57920;
+  P0 = -13.91400; P1 =  27.67900; P2 = -13.39300;
+  P3 =   3.19240; P4 =  -0.10487; STH=0.1753;
+
+  if(S < STH){
+    G1_IM=0.0;
+  }else if(S > STH && S < 0.823){
+    G1_IM = Q0*   pow(S-STH,3)   *(1. + Q1*(S-STH) + Q2*pow(S-STH,2));
+  }
+  else{
+    G1_IM = P0 + P1*S + P2*S*S+ P3*S*S*S + P4*S*S*S*S;
+  }
+  return G1_IM;
+}
+
+double
+a1Helper::WGA1N(double S){
+  double STH,Q0,Q1,Q2,P0,P1,P2,P3,P4,G1_IM;
+  Q0 =   6.28450;Q1 =  -2.95950;Q2 =   4.33550;
+  P0 = -15.41100;P1 =  32.08800;P2 = -17.66600;
+  P3 =   4.93550;P4 =  -0.37498;STH   = 0.1676;
+  if(S < STH){
+    G1_IM = 0.0;
+  }else if(S > STH && S < 0.823){
+    G1_IM = Q0*pow(S-STH,3)*(1. + Q1*(S-STH) + Q2*pow(S-STH,2));
+  }
+  else{
+    G1_IM = P0 + P1*S + P2*S*S+ P3*S*S*S + P4*S*S*S*S;
+  }
+  return G1_IM;
 }

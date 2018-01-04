@@ -28,21 +28,23 @@ using namespace std;
 class TauPolInterface {
  public:
   TauPolInterface();
-  TauPolInterface(vector<TLorentzVector> TauAndProd, string type);
-  TauPolInterface(vector<TLorentzVector> TauAndProd1, string type1,vector<TLorentzVector> TauAndProd2, string type2);
+  TauPolInterface(vector<TLorentzVector> TauAndProd, string type, int TauCharge=1);
+  TauPolInterface(vector<TLorentzVector> TauAndProd1, string type1,  vector<TLorentzVector> TauAndProd2, string type2,int TauCharge1=1, int TauCharge2=1);
   ~TauPolInterface();
 
 
-  void Configure(vector<TLorentzVector> TauAndProd, string type );
-  void ConfigurePair(vector<TLorentzVector> TauAndProd1, string type1,vector<TLorentzVector> TauAndProd2, string type2);
+  void Configure(vector<TLorentzVector> TauAndProd, string type, int TauCharge = 1 );
+  void ConfigurePair(vector<TLorentzVector> TauAndProd1, string type1,  vector<TLorentzVector> TauAndProd2, string type2, int TauCharge1 = 1,int TauCharge2 = 1);
   bool  isConfigured();
   bool  isPairConfigured();
   TLorentzVector Boost(TLorentzVector pB, TLorentzVector frame);
   
+  double getVisibleOmega(string which);
   double getOmega(string which="");
   double getOmegabar(string which="");
   double getCombOmega();
   double getCombOmegaBar();
+  double getCombVisibleOmega();
   TLorentzVector getVisiblePairLV();
  private:
 
@@ -71,7 +73,7 @@ class TauPolInterface {
   TLorentzVector DPF_TauRhoPi0;
   TLorentzVector DPF_InvisibleLV;
   string type_;
-
+  int taucharge_;
 
   TLorentzVector TauLV1,TauLV2;
   TLorentzVector ProductLV1,ProductLV2;
@@ -87,5 +89,6 @@ class TauPolInterface {
   TLorentzVector DPF_TauRhoPi01,DPF_TauRhoPi02;
   TLorentzVector DPF_InvisibleLV1,DPF_InvisibleLV2;
   string type1_,type2_;
+  int taucharge1_, taucharge2_;
 };
 #endif
