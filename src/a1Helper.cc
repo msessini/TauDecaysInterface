@@ -953,7 +953,7 @@ double a1Helper::vgetA1omega(TString type){
   return vgetg(type)/vgetf(type);
 }
 double a1Helper::getOmegaA1Bar(){
-  return nTZLFr()*PVC().Vect();
+  return -nTZLFr()*PVC().Vect();
 }
 double
 a1Helper::getOmegaA1(){
