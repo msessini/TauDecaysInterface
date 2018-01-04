@@ -953,7 +953,7 @@ double a1Helper::vgetA1omega(TString type){
   return vgetg(type)/vgetf(type);
 }
 double a1Helper::getOmegaA1Bar(){
-  return -nTZLFr()*PVC().Vect();
+  return nTZLFr()*PVC().Vect();
 }
 double
 a1Helper::getOmegaA1(){
@@ -1153,7 +1153,7 @@ a1Helper::F3PI(double IFORM,double QQ,double SA,double SB){
   double M1;
   double M2;
   double M3;
-  int IDK =2;  // --------- it is 3pi
+  int IDK = 2;  // --------- it is 3pi
   if(IDK ==1){
     M1=MPIZ;
     M2=MPIZ;
@@ -1172,11 +1172,11 @@ a1Helper::F3PI(double IFORM,double QQ,double SA,double SB){
   
   
   TComplex  BT1 = TComplex(1.,0.);
-  TComplex  BT2 = TComplex(0.12,0.)*TComplex(1, 0.99*TMath::Pi(), true);//  TComplex(1, 0.99*TMath::Pi(), true);   Real part must be equal to one, stupid polar implemenation in root
+  TComplex  BT2 = TComplex(0.12,0.)*TComplex(1, 0.99*TMath::Pi(),  true);//  TComplex(1, 0.99*TMath::Pi(), true);   Real part must be equal to one, stupid polar implemenation in root
   TComplex  BT3 = TComplex(0.37,0.)*TComplex(1, -0.15*TMath::Pi(), true);
-  TComplex  BT4 = TComplex(0.87,0.)*TComplex(1, 0.53*TMath::Pi(), true);
-  TComplex  BT5 = TComplex(0.71,0.)*TComplex(1, 0.56*TMath::Pi(), true);
-  TComplex  BT6 = TComplex(2.10,0.)*TComplex(1, 0.23*TMath::Pi(), true);
+  TComplex  BT4 = TComplex(0.87,0.)*TComplex(1, 0.53*TMath::Pi(),  true);
+  TComplex  BT5 = TComplex(0.71,0.)*TComplex(1, 0.56*TMath::Pi(),  true);
+  TComplex  BT6 = TComplex(2.10,0.)*TComplex(1, 0.23*TMath::Pi(),  true);
   TComplex  BT7 = TComplex(0.77,0.)*TComplex(1, -0.54*TMath::Pi(), true);
 
   TComplex  F3PIFactor(0.,0.); // initialize to zero
@@ -1294,8 +1294,7 @@ a1Helper::F3PI(double IFORM,double QQ,double SA,double SB){
    }
   }
   TComplex FORMA1 = FA1A1P(QQ);
-  TComplex F3PIFactor_ret =  F3PIFactor*FORMA1;
-  return F3PIFactor_ret;
+  return   F3PIFactor*FORMA1;
 } 
 
 
@@ -1346,8 +1345,7 @@ a1Helper::WGA1(double QQ){
   double  GKST = 0.0;
   if(S > MK1SQ) GKST = sqrt((S-MK1SQ)*(S-MK2SQ))/(2.*S);
 
-  double WGA1_ret = C3PI*(WG3PIC+WG3PIN)+CKST*GKST;
-  return WGA1_ret;
+  return C3PI*(WG3PIC+WG3PIN)+CKST*GKST;
 }
 
 
