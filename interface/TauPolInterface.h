@@ -39,7 +39,7 @@ class TauPolInterface {
   bool  isPairConfigured();
   TLorentzVector Boost(TLorentzVector pB, TLorentzVector frame);
   
-  double getVisibleOmega(string which);
+  double getVisibleOmega(string which="");
   double getOmega(string which="");
   double getOmegabar(string which="");
   double getCombOmega();
