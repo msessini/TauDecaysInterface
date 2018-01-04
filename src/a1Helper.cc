@@ -494,7 +494,7 @@ a1Helper::PVC(){
    TComplex BWProd2 = f3(a1.M())*BreitWigner(sqrt(s1),"rho");
  
    double omega = P*CLV - P*CLA;
-   return (P.M()*P.M()*  (CLA - CLV)  -  P*(  P*CLA -  P*CLV))*(1/omega/P.M());
+   return (P.M()*P.M()*  (CLA - CLV)  -  P*(  P*CLA -  P*CLV))*(1/omega/P.M()); // this is positively defined polarimetric 4-vector
 }
 
 TLorentzVector 
@@ -953,7 +953,7 @@ double a1Helper::vgetA1omega(TString type){
   return vgetg(type)/vgetf(type);
 }
 double a1Helper::getOmegaA1Bar(){
-  return nTZLFr()*PVC().Vect();
+  return -nTZLFr()*PVC().Vect();
 }
 double
 a1Helper::getOmegaA1(){
