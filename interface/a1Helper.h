@@ -13,7 +13,6 @@
 #ifndef a1Helper_h
 #define a1Helper_h
 
-
 #include <vector>
 #include "TLorentzVector.h"
 #include "TComplex.h"
@@ -22,12 +21,10 @@
 #include "TMatrixTSym.h"
 #include <string.h>
 #include <vector>
-#include "TLorentzVector.h"
 using namespace std;
 
 
 class a1Helper {
- 
  public:
   a1Helper();
   a1Helper(vector<TLorentzVector> TauA1andProd);
@@ -38,16 +35,8 @@ class a1Helper {
   bool isConfigured();
   void Setup(vector<TLorentzVector> TauA1andProd, TLorentzVector ReferenceFrame, int taucharge );
   void subSetup(double s1, double s2, double s3, double Q);
-
-
-  std::vector<TLorentzVector> getBoosted(){return TauA1andProd_RF;}
-
-
-
   TLorentzVector Boost(TLorentzVector pB, TLorentzVector frame);
 
-
-  //====================
   double costhetaLF(); 
   double sinthetaLF();
 
@@ -65,20 +54,17 @@ class a1Helper {
   double cosgamma();
   double cosbeta();
   double sinbeta();
-  //====================
+
   double getg();
   double getf();
-
- double vgetg(TString type="");
- double vgetf(TString type="");
- double vgetgscalar(TString type="");
- double vgetfscalar(TString type="");
-
- double vgetA1omega(TString type="");
- double vgetA1omegascalar(TString type="");
-
- double getOmegaA1();
- double getOmegaA1Bar();
+  double vgetg(TString type="");
+  double vgetf(TString type="");
+  double vgetgscalar(TString type="");
+  double vgetfscalar(TString type="");
+  double vgetA1omega(TString type="");
+  double vgetA1omegascalar(TString type="");
+  double getOmegaA1();
+  double getOmegaA1Bar();
 
 //========== TRF  =======
  double TRF_vgetf(TString type="");
@@ -168,7 +154,6 @@ class a1Helper {
   double WGA1C(double S);
   double WGA1N(double S);
 
-
   TComplex  BWa1(double QQ);
   TComplex  BWrho(double QQ);
   TComplex  BWrhoPrime(double QQ);
@@ -176,11 +161,9 @@ class a1Helper {
   double gForGammaA1(double QQ);
   double GammaRho(double QQ);
   double  GammaRhoPrime(double QQ);
-
-
-
   double GetOmegaA1();
 
+  std::vector<TLorentzVector> getBoosted(){return TauA1andProd_RF;}
 
 
  private:
@@ -229,17 +212,12 @@ class a1Helper {
   double _s3; 
   double _Q;
 
-
   double LFQ;
   TLorentzVector   LFosPionLV;
   TLorentzVector   LFss1pionLV;
   TLorentzVector   LFss2pionLV;
   TLorentzVector   LFa1LV;
   TLorentzVector   LFtauLV;
-
-
   TMatrixT<double> convertToMatrix(TVectorT<double> V);
-
-
 };
 #endif

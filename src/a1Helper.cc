@@ -68,8 +68,6 @@ a1Helper::Setup(vector<TLorentzVector> TauA1andProd, TLorentzVector ReferenceFra
    LFtauLV = TauA1andProd.at(0);
    LFQ= LFa1LV.M();
 
-  
-
    _osPionLV   = TauA1andProd_RF.at(1);
    _ss1pionLV  = TauA1andProd_RF.at(2);
    _ss2pionLV  = TauA1andProd_RF.at(3);
@@ -93,16 +91,13 @@ a1Helper::subSetup(double s1, double s2, double s3, double Q){
    _Q = Q;
 }
  
-
 void 
 a1Helper::Configure(vector<TLorentzVector> TauA1andProd, int taucharge){
-
   if(TauA1andProd.size()!=4){
     std::cout<<" Warning!! Size of input vector != 4 !! "<<std::endl;
   }
   TLorentzVector boost = TauA1andProd.at(0);
   Setup(TauA1andProd,boost,taucharge);
-
 }
 
 void 
@@ -136,7 +131,7 @@ a1Helper::Boost(TLorentzVector pB, TLorentzVector frame){
     if(frame.E()==0){ std::cout<<" Caution: Please check that you perform boost correctly!  " <<std::endl; return pB;} 
    else   b=frame.Vect()*(1/frame.E());
    vec(0)  = pB.E();    vec(1)  = pB.Px(); 
-   vec(2)  = pB.Py();  vec(3)  = pB.Pz();
+   vec(2)  = pB.Py();   vec(3)  = pB.Pz();
    double gamma  = 1/sqrt( 1 - b.Mag2());
    transform(0,0)=gamma; transform(0,1) =- gamma*b.X() ;  transform(0,2) =  - gamma*b.Y();  transform(0,3) = - gamma*b.Z(); 
    transform(1,0)=-gamma*b.X(); transform(1,1) =(1+ (gamma-1)*b.X()*b.X()/b.Mag2()) ;  transform(1,2) = ((gamma-1)*b.X()*b.Y()/b.Mag2());  transform(1,3) = ((gamma-1)*b.X()*b.Z()/b.Mag2());
@@ -149,6 +144,7 @@ double
 a1Helper::Scalar(TLorentzVector p1, TLorentzVector p2){
     return p1.Vect()*p2.Vect();
 }
+
 double 
 a1Helper::MomentSFunction(double s, string type){
   int cells(20);  
@@ -217,28 +213,31 @@ double a1Helper::K1(double ct, double QQ, int hel){
   if(debug){if(std::fabs(ct) > 1) std::cout<<"Warning! K1: |ct| > 1 "<<std::endl;}
   return   1 - hel*ct - mtau*mtau*(1+hel*ct)/QQ/QQ;
 }
+
 double a1Helper::K2(double ct, double QQ, int hel){
   if(debug){if(std::fabs(ct) > 1) std::cout<<"Warning! K1: |ct| > 1 "<<std::endl;}
   return   mtau*mtau*(1+hel*ct)/QQ/QQ;
 }
+
 double a1Helper::K3(double ct, double QQ, int hel){
   if(debug){if(std::fabs(ct) > 1) std::cout<<"Warning! K1: |ct| > 1 "<<std::endl;}
   return   1 - hel*ct;
 }
+
 double a1Helper::K1bar(double ct, double QQ, int hel){
   if(debug){if(std::fabs(ct) > 1) std::cout<<"Warning! K1bar: |ct| > 1 "<<std::endl;}
   double cpsi = (ct*(mtau*mtau  + QQ)   + (mtau*mtau  - QQ))/(ct*(mtau*mtau  - QQ)   + (mtau*mtau  + QQ));
   if(debug){if(std::fabs(cpsi) > 1) std::cout<<"Warning! K1bar: |cpsi| > 1 "<<std::endl;}
   return  K1(ct,QQ,hel)*0.5*(3*cpsi*cpsi - 1) - 3*sqrt(mtau*mtau/QQ/QQ)*cpsi*sqrt(1-cpsi*cpsi)*sqrt(1-ct*ct)*hel;
-
 }
+
 double a1Helper::K2bar(double ct, double QQ, int hel){
   if(debug){if(std::fabs(ct) > 1) std::cout<<"Warning! K1bar: |ct| > 1 "<<std::endl;}
   double cpsi = (ct*(mtau*mtau  + QQ)   + (mtau*mtau  - QQ))/(ct*(mtau*mtau  - QQ)   + (mtau*mtau  + QQ));
   if(debug){if(std::fabs(cpsi) > 1) std::cout<<"Warning! K1bar: |cpsi| > 1 "<<std::endl;}
   return  K2(ct,QQ,hel)*cpsi  + sqrt(mtau*mtau/QQ/QQ)*sqrt(1-cpsi*cpsi)*sqrt(1-ct*ct)*hel;
-
 }
+
  double a1Helper::K3bar(double ct, double QQ, int hel){
   if(debug){if(std::fabs(ct) > 1) std::cout<<"Warning! K1bar: |ct| > 1 "<<std::endl;}
   double cpsi = (ct*(mtau*mtau  + QQ)   + (mtau*mtau  - QQ))/(ct*(mtau*mtau  - QQ)   + (mtau*mtau  + QQ));
@@ -296,8 +295,6 @@ a1Helper::WC(){
    double undersqrt2 = VV2()  -h();
    return  -sqrt(h()) * ( 2 * sqrt(undersqrt1) * F1().Rho2() - 2*sqrt(undersqrt2)*F2().Rho2()  
 			  + (QQ - mpi*mpi + _s3)*(_s1 - _s2 )*( F1()*Conjugate(F2()) ).Re()/QQ/sqrt(h0() ) );
-
-
  }
 
  double
@@ -313,16 +310,16 @@ double
 double
  a1Helper::WSB(){
   double undersqrt1 = VV1()  -h();
-   double undersqrt2 = VV2()  -h();
-   return  -2*_Q* (sqrt(undersqrt1) * (F1()*Conjugate(F4())).Re() +   sqrt(undersqrt2)*(F2()*Conjugate(F4())).Re()  );
- }
+  double undersqrt2 = VV2()  -h();
+  return  -2*_Q* (sqrt(undersqrt1) * (F1()*Conjugate(F4())).Re() +   sqrt(undersqrt2)*(F2()*Conjugate(F4())).Re()  );
+}
 double
- a1Helper::WSD(){
+a1Helper::WSD(){
   double QQ = _Q*_Q;
   return  2*sqrt(QQ*h())* ( (F1()*Conjugate(F4())).Re() - (F2()*Conjugate(F4())).Re()   );
- }
+}
 double
- a1Helper::WSC(){
+a1Helper::WSC(){
   double undersqrt1 = VV1()  -h();
   double undersqrt2 = VV2()  -h();
   return  2*_Q* (sqrt(undersqrt1) * (F1()*Conjugate(F4())).Im() +   sqrt(undersqrt2)*(F2()*Conjugate(F4())).Im()  );
@@ -361,6 +358,7 @@ a1Helper::singammaLF(){
   
   return cosgammaLF()*scale;
 }
+
 double
 a1Helper::cos2gamma(){
    return singamma()*singamma()   -     cosgamma()*cosgamma();
@@ -370,6 +368,7 @@ double
 a1Helper::sin2gamma(){
   return 2*singamma()*cosgamma();
 }
+
 double 
 a1Helper::cospsiLF(){
   double QQ = LFQ*LFQ;
@@ -378,6 +377,7 @@ a1Helper::cospsiLF(){
   if(x*x  - 4*QQ/s <= 0 ){if(debug){std::cout<<"Warning! In a1Helper::cospsi root square <=0! return 0"<<std::endl;} return 0;}
   return    ( x*(mtau*mtau + QQ)  - 2*QQ  )   /   ( mtau*mtau  - QQ   ) / sqrt(x*x  - 4*QQ/s); 
 }
+
 double 
 a1Helper::sinpsiLF(){
   if(cospsiLF()*cospsiLF() > 1  ){if(debug){std::cout<<"Warning! In a1Helper::sinpsi root square <=0! return nan"<<std::endl;}}
@@ -433,18 +433,17 @@ a1Helper::V2(){
   return  4*mpi*mpi -_s1  - pow(_s3  - _s2,2)/4/QQ;
 }
 
-
 double
 a1Helper::VV12(){ 
   double QQ = _Q*_Q;
   return  -(QQ/2 - _s3 - 0.5*mpi*mpi) - (_s3 - _s1)*(_s3 - _s2)/4/QQ;
 }
+
 double
 a1Helper::JJ(){
   double QQ = _Q*_Q;
   return  (V1()*BreitWigner(sqrt(_s2),"rho").Rho2() + V2()*BreitWigner(sqrt(_s1),"rho").Rho2()  + VV12()*( BreitWigner(sqrt(_s1),"rho")*Conjugate(BreitWigner(sqrt(_s2),"rho")) + BreitWigner(sqrt(_s2),"rho")*Conjugate(BreitWigner(sqrt(_s1),"rho"))  ))*f3(sqrt(QQ)).Rho2();
 }
-
 
 TComplex
 a1Helper::f3(double Q){ 
@@ -463,7 +462,6 @@ a1Helper::PVC(){
    double s2 = (q1+q3).M2();
    double s3 = (q1+q2).M2();
 
-
    TLorentzVector vec1 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
    TLorentzVector vec2 = q3 - q1 -  a1* (a1*(q3-q1)/a1.M2());
    TLorentzVector vec3 = q1 - q2 -  a1* (a1*(q1-q2)/a1.M2());
@@ -472,16 +470,13 @@ a1Helper::PVC(){
    TComplex F2 = TComplex(COEF2)*F3PI(2,a1.M2(),s2,s1);
    TComplex F3 = TComplex(COEF3)*F3PI(3,a1.M2(),s3,s1);
 
-
    std::vector<TComplex> HADCUR;
-   std::vector<TComplex> HADCURC;
-
    HADCUR.push_back(TComplex(vec1.E())*F1  + TComplex(vec2.E())*F2   +   TComplex(vec3.E())*F3 ); // energy component goes first
    HADCUR.push_back(TComplex(vec1.Px())*F1 + TComplex(vec2.Px())*F2  +   TComplex(vec3.Px())*F3 );
    HADCUR.push_back(TComplex(vec1.Py())*F1 + TComplex(vec2.Py())*F2  +   TComplex(vec3.Py())*F3 );
    HADCUR.push_back(TComplex(vec1.Pz())*F1 + TComplex(vec2.Pz())*F2  +   TComplex(vec3.Pz())*F3 );
 
-
+   std::vector<TComplex> HADCURC;
    HADCURC.push_back(Conjugate(TComplex(vec1.E())*F1  + TComplex(vec2.E())*F2   +   TComplex(vec3.E())*F3) ); // energy component goes first
    HADCURC.push_back(Conjugate(TComplex(vec1.Px())*F1 + TComplex(vec2.Px())*F2  +   TComplex(vec3.Px())*F3 ));
    HADCURC.push_back(Conjugate(TComplex(vec1.Py())*F1 + TComplex(vec2.Py())*F2  +   TComplex(vec3.Py())*F3 ) );
@@ -510,7 +505,6 @@ a1Helper::CLVEC(std::vector<TComplex> H, std::vector<TComplex> HC, TLorentzVecto
   return TLorentzVector( PIVEC1, PIVEC2, PIVEC3, PIVEC0);
 }
 
-
 TLorentzVector 
 a1Helper::CLAXI(std::vector<TComplex> H, std::vector<TComplex> HC, TLorentzVector N){
   TComplex a4 = HC.at(0);   TComplex a1 =  HC.at(1);   TComplex a2 =  HC.at(2);   TComplex a3 =  HC.at(3);
@@ -530,7 +524,6 @@ a1Helper::CLAXI(std::vector<TComplex> H, std::vector<TComplex> HC, TLorentzVecto
 
   return TLorentzVector( PIAX1,PIAX2,PIAX3,PIAX0);
 }
-
 
 TLorentzVector
 a1Helper::PTZ5(TLorentzVector aR, TLorentzVector aI, TLorentzVector bR, TLorentzVector bI, TLorentzVector c){ 
@@ -555,26 +548,19 @@ a1Helper::PTZ5(TLorentzVector aR, TLorentzVector aI, TLorentzVector bR, TLorentz
   return d;
 }
 
-
-
 TLorentzVector
 a1Helper::PTZ(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1, TLorentzVector N){ 
   double s1 = (q2+q3).M2();
   double s2 = (q1+q3).M2();
- 
   
   TLorentzVector vec1 = q1 - q3 -  a1* (a1*(q1-q3)/a1.M2());
   TLorentzVector vec2 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
-
-
 
   TComplex L1 = f3(a1.M())*BreitWigner(sqrt(s2),"rho");
   TComplex L2 = f3(a1.M())*BreitWigner(sqrt(s1),"rho");
 
   TComplex CL1 = Conjugate(f3(a1.M())*BreitWigner(sqrt(s2),"rho"));
   TComplex CL2 = Conjugate(f3(a1.M())*BreitWigner(sqrt(s1),"rho"));
-
-
 
   TComplex factor1=JCN(q1,q2,q3,a1,N)*L1 + JN(q1,q2,q3,a1,N)*CL1;
   TComplex factor2=JCN(q1,q2,q3,a1,N)*L2 + JN(q1,q2,q3,a1,N)*CL2;
@@ -584,7 +570,6 @@ a1Helper::PTZ(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzV
   TLorentzVector out  = 2*(factor1*vec1 + factor2*vec2 - JJ()*N);
   return out;
 }
-
 
 TComplex
 a1Helper::JN(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1, TLorentzVector N){ 
@@ -604,6 +589,7 @@ a1Helper::JN(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVe
   TComplex out  = BWProd1*prod1 + BWProd2*prod2;
   return out;
 }
+
 TComplex
 a1Helper::JCN(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1, TLorentzVector N){ 
   double s1 = (q2+q3).M2();
@@ -621,10 +607,8 @@ a1Helper::JCN(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzV
 }
 
 TLorentzVector a1Helper::JRe(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1){
-
   double s1 = (q2+q3).M2();
   double s2 = (q1+q3).M2();
- 
   
   TLorentzVector vec1 = q1 - q3 -  a1* (a1*(q1-q3)/a1.M2());
   TLorentzVector vec2 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
@@ -635,20 +619,19 @@ TLorentzVector a1Helper::JRe(TLorentzVector q1, TLorentzVector q2, TLorentzVecto
   TLorentzVector out = vec1*BWProd1.Re() + vec2*BWProd2.Re();
   return out;
 }
+
 TLorentzVector a1Helper::JIm(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1){
 
   double s1 = (q2+q3).M2();
   double s2 = (q1+q3).M2();
  
-  
   TLorentzVector vec1 = q1 - q3 -  a1* (a1*(q1-q3)/a1.M2());
   TLorentzVector vec2 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
     
   TComplex BWProd1 = f3(a1.M())*BreitWigner(sqrt(s2),"rho");
   TComplex BWProd2 = f3(a1.M())*BreitWigner(sqrt(s1),"rho");
 
-  TLorentzVector out = vec1*BWProd1.Im() + vec2*BWProd2.Im();
-  return out;
+  return vec1*BWProd1.Im() + vec2*BWProd2.Im();
 }
 
 TLorentzVector a1Helper::JCRe(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1){
@@ -665,11 +648,11 @@ TLorentzVector a1Helper::JCRe(TLorentzVector q1, TLorentzVector q2, TLorentzVect
   TLorentzVector out = vec1*BWProd1.Re() + vec2*BWProd2.Re();
   return out;
 }
+
 TLorentzVector a1Helper::JCIm(TLorentzVector q1, TLorentzVector q2, TLorentzVector q3, TLorentzVector a1){
 
   double s1 = (q2+q3).M2();
   double s2 = (q1+q3).M2();
- 
   
   TLorentzVector vec1 = q1 - q3 -  a1* (a1*(q1-q3)/a1.M2());
   TLorentzVector vec2 = q2 - q3 -  a1* (a1*(q2-q3)/a1.M2());
@@ -681,14 +664,11 @@ TLorentzVector a1Helper::JCIm(TLorentzVector q1, TLorentzVector q2, TLorentzVect
   return out;
 }
 
-
 double
 a1Helper::VV1(){ //  this is -V1^{2}
   double QQ = _Q*_Q;
   return  _s2 - 4*mpi*mpi + pow(_s3 - _s1,2)/4/QQ;
 }
-
-
 
 double
 a1Helper::VV2(){ //  this is -V2^{2}
@@ -702,7 +682,6 @@ a1Helper::V1V2(){  // this is -V1V2
   return  (QQ/2 - _s3 - 0.5*mpi*mpi) + (_s3 - _s1)*(_s3 - _s2)/4/QQ;
 }
 
-
 double
 a1Helper::h0(){ // this is -3sqrt{h0}/2
   double QQ = _Q*_Q;
@@ -714,7 +693,6 @@ a1Helper::h(){
   double QQ = _Q*_Q;
   return (_s1*_s2*_s3 - mpi*mpi*pow(QQ - mpi*mpi,2))/h0()/QQ;  // this is sqrt{h}
 }
-
 
 TComplex 
 a1Helper::F1(){
@@ -777,6 +755,7 @@ double a1Helper::ga1(double  Q){
   double QQ = Q*Q;
   return (QQ > pow(mrho + mpi,2)) ?  QQ*(1.623 + 10.38/QQ - 9.32/QQ/QQ   + 0.65/QQ/QQ/QQ)  : 4.1*pow(QQ - 9*mpi*mpi,3)*(  1 - 3.3*(QQ - 9*mpi*mpi)  + 5.8*pow(QQ - 9*mpi*mpi,2)  );
 }
+
 double
 a1Helper::Mass(string type){
   double m = mrho;
@@ -786,106 +765,90 @@ a1Helper::Mass(string type){
   return m;
 }
 
-
 double a1Helper::ppi(double QQ){  if(QQ < 4*mpi*mpi) std::cout<<"Warning! Can not compute ppi(Q); root square <0 ; return nan  "; return 0.5*sqrt(QQ - 4*mpi*mpi);}
 
+double a1Helper::getf(){
+  double QQ=_Q*_Q;
+  double l  = 0.5*(mtau*mtau + QQ)/sqrt(QQ);
+  double prt1 =   -2*l   *   ( 2*WA()/3   + 0.5*(3*cospsiLF()*cospsiLF()   -1)  *  ( WA()*(3*cosbeta()*cosbeta() -1 )/6    - 0.5*WC()*sinbeta()*sinbeta()*cos2gamma()   + 0.5*WD()* sinbeta()*sinbeta()* sin2gamma() )   )/sqrt(QQ);
+  double prt2 = mtau*mtau*WA()/QQ + mtau*mtau  *  (  WSA() +  cospsiLF()*sinbeta()*(   WSB() *cosgamma()      - WSD() * singamma())     )/QQ + WE()*cosbeta()*cospsiLF();
+  return prt1+ prt2;
+}
 
- double a1Helper::getf(){
-   double QQ=_Q*_Q;
-   double l  = 0.5*(mtau*mtau + QQ)/sqrt(QQ);
-   double prt1 =   -2*l   *   ( 2*WA()/3   + 0.5*(3*cospsiLF()*cospsiLF()   -1)  *  ( WA()*(3*cosbeta()*cosbeta() -1 )/6    - 0.5*WC()*sinbeta()*sinbeta()*cos2gamma()   + 0.5*WD()* sinbeta()*sinbeta()* sin2gamma() )   )/sqrt(QQ);
-   double prt2 = mtau*mtau*WA()/QQ + mtau*mtau  *  (  WSA() +  cospsiLF()*sinbeta()*(   WSB() *cosgamma()      - WSD() * singamma())     )/QQ + WE()*cosbeta()*cospsiLF();
-   double res = prt1+ prt2;
-
-   return res;
- }
  double a1Helper::getg(){
    double QQ=_Q*_Q;
    double l0= 0.5*(mtau*mtau - QQ)/sqrt(QQ);
    double prt1 =   -2*l0   * costhetaLF()*  ( 2*WA()/3   + 0.5*(3*cospsiLF()*cospsiLF()   -1)  *  ( WA()*(3*cosbeta()*cosbeta() -1 )/6    -  0.5*WC()*sinbeta()*sinbeta()*cos2gamma()   + 0.5*WD()* sinbeta()*sinbeta()* sin2gamma() )   )/sqrt(QQ);
    double prt2 = mtau*mtau*WA()*costhetaLF()/QQ  +    sqrt(mtau*mtau/QQ )  * sinthetaLF()* ( 0.5*WA()*2* sinbeta()*cosbeta()* cosalpha() -  
-                                              WC()*sinbeta()* (sinalpha()* sin2gamma() + cos2gamma()* cosalpha()*    cosbeta() )    -    WD()*sinbeta()*( sinalpha()*cos2gamma() + sin2gamma()* cosalpha()*cosbeta()  )- 2*cospsiLF()*sinpsiLF()  *
- 				            (WA()*(3*cosbeta() *cosbeta() -1 )/6   -    0.5*WC()*sinbeta()* sinbeta()* cos2gamma()+ 0.5*WD()*sinbeta()* sinbeta()* cos2gamma() + WD()*sinbeta()* sinbeta()* sin2gamma())/3   );
-
+											     WC()*sinbeta()* (sinalpha()* sin2gamma() + cos2gamma()* cosalpha()*    cosbeta() )    -    WD()*sinbeta()*( sinalpha()*cos2gamma() + sin2gamma()* cosalpha()*cosbeta()  )- 2*cospsiLF()*sinpsiLF()  *
+											     (WA()*(3*cosbeta() *cosbeta() -1 )/6   -    0.5*WC()*sinbeta()* sinbeta()* cos2gamma()+ 0.5*WD()*sinbeta()* sinbeta()* cos2gamma() + WD()*sinbeta()* sinbeta()* sin2gamma())/3   );
+   
    double prt3  =  sqrt(mtau*mtau/QQ ) *sinthetaLF()* (WE()*(cosbeta()*sinpsiLF() + sinbeta()*cosalpha()) +cosbeta()*sinalpha()*(WSC()*cosgamma() - WSE()*singamma()) + cosalpha()*(WSC()*singamma() + WSE()*cosgamma()));
    double prt4  =  -WE()*costhetaLF()*cosbeta()*cospsiLF() + mtau*mtau*costhetaLF()*(WSA() + cospsiLF()*sinbeta()  * (WSB()*cosgamma() - WSD()* singamma()  ) )/QQ;
    double prt5  =  sqrt(mtau*mtau/QQ)*sinthetaLF() *  ( sinpsiLF()*sinbeta()*( WSB()* cosgamma() - WSD()* singamma()) + cosbeta()*cosalpha()*(WSD()*singamma() - WSB()*cosgamma()  ) + 
  							sinalpha()*(WSD()*cosgamma() + WSB()*singamma())          );
-   double res = prt1+ prt2 + prt3 + prt4 + prt5;
-   return res;
+   return prt1+ prt2 + prt3 + prt4 + prt5;
  }
 
-
- double a1Helper::vgetf(TString type){
-   double QQ=_Q*_Q;
-   double RR  = mtau*mtau/QQ; 
-   double U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
-   double B = 0.5*(3*cosbeta()*cosbeta() - 1);
-
-   double fA =  WA()*(2+RR + B*U)/3;
-   double fC = -WC()*0.5*U*sinbeta()*sinbeta()* cos2gamma();
-   double fD = WD()*0.5*U*sinbeta()*sinbeta()* sin2gamma();
-   double fE =  WE()*cospsiLF()*cosbeta();
-
-   double res = fA+fC+fD+fE;
-
-   return res;
- }
-
-
- double a1Helper::vgetg(TString type){
-   double QQ=_Q*_Q;
-   double RR  = mtau*mtau/QQ; double R = sqrt(RR);
-   double V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*R;
-   double B = 0.5*(3*cosbeta()*cosbeta() - 1);
-   double fact =0;
-   if(type == "bar") fact =1;
-   double gA =  WA()*(costhetaLF()*(RR - 2)   - B*V)/3                                             +     fact*WA()*0.5*R*sinthetaLF()*cosalpha()*2*sinbeta()*cosbeta();
-   double gC =  WC()*0.5*V*sinbeta()*sinbeta()* cos2gamma()                                        -     fact*WC()*R*sinthetaLF()*sinbeta()*(sinalpha()*sin2gamma()  -  cos2gamma()*cosalpha()*cosbeta() ) ;
-   double gD = -WD()*0.5*V*sinbeta()*sinbeta()* sin2gamma()                                        -     fact*WD()*R*sinthetaLF()*sinbeta()*(sinalpha()*cos2gamma() + sin2gamma()* cosalpha()*cosbeta()  );
-   double gE = - WE()*cosbeta()*( costhetaLF()*cospsiLF() + R*sinthetaLF()*sinpsiLF())             +     fact*WE()*R*sinthetaLF()*sinbeta()*cosalpha();
-
-
-   double res = gA+gC+gD+gE;
-   return res;
- }
-
- double a1Helper::vgetfscalar(TString type){
-   double QQ=_Q*_Q;
-   double RR  = mtau*mtau/QQ; 
-   double U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
-   double B = 0.5*(3*cosbeta()*cosbeta() - 1);
-
-   double fA =  WA()*(2+RR + B*U)/3;
-   double fC = -WC()*0.5*U*sinbeta()*sinbeta()* cos2gamma();
-   double fD = WD()*0.5*U*sinbeta()*sinbeta()* sin2gamma();
-   double fE =  WE()*cospsiLF()*cosbeta();
-   double fSA = WSA()*RR;
-   double fSB = WSB()*RR*cospsiLF()*sinbeta()*cosgamma();
-   double fSC = 0;
-   double fSD = -WSD()*RR*cospsiLF()*sinbeta()*singamma();
-   double fSE =0;
-
-   double res = fA+fC+fD+fE  + fSA + fSB + fSC  + fSD + fSE;
-
-   return res;
- }
- double a1Helper::vgetgscalar(TString type){
-   double QQ=_Q*_Q;
-   double RR  = mtau*mtau/QQ; double R = sqrt(RR);
-   double V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*R;
-   double B = 0.5*(3*cosbeta()*cosbeta() - 1);
-   double fact =0;
-   if(type == "bar") fact =1;
-
+double a1Helper::vgetf(TString type){
+  double QQ=_Q*_Q;
+  double RR  = mtau*mtau/QQ; 
+  double U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
+  double B = 0.5*(3*cosbeta()*cosbeta() - 1);
   
+  double fA =  WA()*(2+RR + B*U)/3;
+  double fC = -WC()*0.5*U*sinbeta()*sinbeta()* cos2gamma();
+  double fD = WD()*0.5*U*sinbeta()*sinbeta()* sin2gamma();
+  double fE =  WE()*cospsiLF()*cosbeta();
+  return fA+fC+fD+fE;
+}
+
+double a1Helper::vgetg(TString type){
+  double QQ=_Q*_Q;
+  double RR  = mtau*mtau/QQ; double R = sqrt(RR);
+  double V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*R;
+  double B = 0.5*(3*cosbeta()*cosbeta() - 1);
+  double fact =0;
+  if(type == "bar") fact =1;
+  double gA =  WA()*(costhetaLF()*(RR - 2)   - B*V)/3                                             +     fact*WA()*0.5*R*sinthetaLF()*cosalpha()*2*sinbeta()*cosbeta();
+  double gC =  WC()*0.5*V*sinbeta()*sinbeta()* cos2gamma()                                        -     fact*WC()*R*sinthetaLF()*sinbeta()*(sinalpha()*sin2gamma()  -  cos2gamma()*cosalpha()*cosbeta() ) ;
+  double gD = -WD()*0.5*V*sinbeta()*sinbeta()* sin2gamma()                                        -     fact*WD()*R*sinthetaLF()*sinbeta()*(sinalpha()*cos2gamma() + sin2gamma()* cosalpha()*cosbeta()  );
+  double gE = - WE()*cosbeta()*( costhetaLF()*cospsiLF() + R*sinthetaLF()*sinpsiLF())             +     fact*WE()*R*sinthetaLF()*sinbeta()*cosalpha();
+  return gA+gC+gD+gE;
+ }
+
+double a1Helper::vgetfscalar(TString type){
+  double QQ=_Q*_Q;
+  double RR  = mtau*mtau/QQ; 
+  double U = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 - RR);
+  double B = 0.5*(3*cosbeta()*cosbeta() - 1);
+  
+  double fA =  WA()*(2+RR + B*U)/3;
+  double fC = -WC()*0.5*U*sinbeta()*sinbeta()* cos2gamma();
+  double fD = WD()*0.5*U*sinbeta()*sinbeta()* sin2gamma();
+  double fE =  WE()*cospsiLF()*cosbeta();
+  double fSA = WSA()*RR;
+  double fSB = WSB()*RR*cospsiLF()*sinbeta()*cosgamma();
+  double fSC = 0;
+  double fSD = -WSD()*RR*cospsiLF()*sinbeta()*singamma();
+  double fSE =0;
+  
+  return fA+fC+fD+fE  + fSA + fSB + fSC  + fSD + fSE;
+}
+
+double a1Helper::vgetgscalar(TString type){
+   double QQ=_Q*_Q;
+   double RR  = mtau*mtau/QQ; double R = sqrt(RR);
+   double V = 0.5*(3*cospsiLF()*cospsiLF() - 1)*(1 + RR)*costhetaLF() + 0.5*3*2*cospsiLF()* sinpsiLF()*sinthetaLF()*R;
+   double B = 0.5*(3*cosbeta()*cosbeta() - 1);
+   double fact =0;
+   if(type == "bar") fact =1;
+ 
    double gA =  WA()*(costhetaLF()*(RR - 2)   - B*V)/3                                             +     fact*WA()*0.5*R*sinthetaLF()*cosalpha()*2*sinbeta()*cosbeta();
    double gC =  WC()*0.5*V*sinbeta()*sinbeta()* cos2gamma()                                        -     fact*WC()*R*sinthetaLF()*sinbeta()*(sinalpha()*sin2gamma()  -  cos2gamma()*cosalpha()*cosbeta() ) ;
    double gD = -WD()*0.5*V*sinbeta()*sinbeta()* sin2gamma()                                        -     fact*WD()*R*sinthetaLF()*sinbeta()*(sinalpha()*cos2gamma() + sin2gamma()* cosalpha()*cosbeta()  );
    double gE = - WE()*cosbeta()*( costhetaLF()*cospsiLF() + R*sinthetaLF()*sinpsiLF())             +     fact*WE()*R*sinthetaLF()*sinbeta()*cosalpha();
-   double res = gA+gC+gD+gE;
-
-   return res;
+   return gA+gC+gD+gE;
  }
 
  double a1Helper::TRF_vgetf(TString type){
@@ -912,6 +875,7 @@ double a1Helper::ppi(double QQ){  if(QQ < 4*mpi*mpi) std::cout<<"Warning! Can no
 
    return res;
  }
+
  double a1Helper::TRF_vgetg(TString type){
    double QQ=_Q*_Q;
    double RR  = mtau*mtau/QQ; double R = sqrt(RR);
@@ -938,23 +902,29 @@ double a1Helper::ppi(double QQ){  if(QQ < 4*mpi*mpi) std::cout<<"Warning! Can no
    return res;
  }
 
-double a1Helper::TRF_vgetA1omega(TString type){
+double 
+a1Helper::TRF_vgetA1omega(TString type){
   if(TRF_vgetf(type)==0){ if(debug){std::cout<<"Warning!  Can not return vomegascalar; f(0)=0; return -50;  "<<std::endl;} return -50;}
   return TRF_vgetg(type)/TRF_vgetf(type);
 }
 
-
-double a1Helper::vgetA1omegascalar(TString type){
+double 
+a1Helper::vgetA1omegascalar(TString type){
   if(vgetfscalar(type)==0){ if(debug){std::cout<<"Warning!  Can not return vomegascalar; f(0)=0; return -5;  "<<std::endl;} return -5;}
   return vgetgscalar(type)/vgetfscalar(type);
 }
-double a1Helper::vgetA1omega(TString type){
+
+double 
+a1Helper::vgetA1omega(TString type){
   if(vgetf(type)==0){ if(debug){std::cout<<"Warning!  Can not return vomega; f(0)=0; return -5;  "<<std::endl; }return -5;}
   return vgetg(type)/vgetf(type);
 }
-double a1Helper::getOmegaA1Bar(){
+
+double 
+a1Helper::getOmegaA1Bar(){
   return -nTZLFr()*PVC().Vect();
 }
+
 double
 a1Helper::getOmegaA1(){
   double QQ=_Q*_Q;
@@ -969,6 +939,7 @@ a1Helper::getOmegaA1(){
   if(std::isinf(std::fabs(omega)) || std::isnan(std::fabs(omega))) omega  = -999.;
   return omega;
 }
+
 TLorentzVector
 a1Helper::sLV(){
   double QQ = _Q*_Q;
@@ -1011,6 +982,7 @@ a1Helper::TRF_cosalpha(){
    if(nTCrossns.Mag() ==0 || nTCrossnPerp.Mag() ==0){if(debug){std::cout<<" Can not compute cos alpha, one denominator is 0, return TRF cos alpha =0  "<< std::endl; }return 0;}
   return nTCrossns.Dot(nTCrossnPerp)/nTCrossns.Mag()/nTCrossnPerp.Mag();
 }
+
 double  
 a1Helper::TRF_sinalpha(){
    TVector3 nTCrossns  = nT().Cross(ns());
@@ -1019,15 +991,19 @@ a1Helper::TRF_sinalpha(){
   return -ns().Dot(nTCrossnPerp)/nTCrossns.Mag()/nTCrossnPerp.Mag();
 }
 
-double a1Helper::TRF_cosbeta(){
+double 
+a1Helper::TRF_cosbeta(){
   return nT().Dot(nPerp());
 }
-double a1Helper::TRF_sinbeta(){
+
+double 
+a1Helper::TRF_sinbeta(){
   if(TRF_cosbeta()*TRF_cosbeta() > 1 ){if(debug){std::cout<<"Warning! Can not compute TRF sin beta! return 0"<<std::endl;} return 0;}
   return sqrt(1 - TRF_cosbeta()*TRF_cosbeta());
 }
 
-double a1Helper::TRF_cosgamma(){
+double 
+a1Helper::TRF_cosgamma(){
   TVector3 nTCrossnPerp  = nT().Cross(nPerp());
 
   TVector3 qvect = _osPionLV.Vect()*(1/_osPionLV.Vect().Mag());
@@ -1035,7 +1011,8 @@ double a1Helper::TRF_cosgamma(){
   return -nT()*qvect/nTCrossnPerp.Mag();
 }
 
-double a1Helper::TRF_singamma(){
+double 
+a1Helper::TRF_singamma(){
   TVector3 nTCrossnPerp  = nT().Cross(nPerp());
   TVector3 qvect = _osPionLV.Vect()*(1/_osPionLV.Vect().Mag());
 
@@ -1043,29 +1020,36 @@ double a1Helper::TRF_singamma(){
   return qvect*nTCrossnPerp/nTCrossnPerp.Mag();
 }
 
-
-double a1Helper::cosalpha(){
+double 
+a1Helper::cosalpha(){
    TVector3 nLCrossnT  = nL().Cross(nT());
    TVector3 nLCrossnPerp  = nL().Cross(nPerp());
 
    if(nLCrossnPerp.Mag() ==0 || nLCrossnT.Mag() ==0){if(debug){std::cout<<" Can not compute cos alpha, one denominator is 0, return cos alpha =0  "<< std::endl;} return 0;}
   return nLCrossnT.Dot(nLCrossnPerp)/nLCrossnT.Mag()/nLCrossnPerp.Mag();
 }
-double a1Helper::sinalpha(){
+
+double 
+a1Helper::sinalpha(){
   TVector3 nLCrossnT  = nL().Cross(nT());
   TVector3 nLCrossnPerp  = nL().Cross(nPerp());
   if(nLCrossnPerp.Mag() ==0 || nLCrossnT.Mag() ==0){if(debug){std::cout<<" Can not compute sin alpha, one denominator is 0, return sin alpha =0  "<< std::endl; }return 0;}
   return -nT().Dot(nLCrossnPerp)/nLCrossnT.Mag()/nLCrossnPerp.Mag();
 }
-double a1Helper::cosbeta(){
+
+double 
+a1Helper::cosbeta(){
   return nL().Dot(nPerp());
 }
-double a1Helper::sinbeta(){
+
+double 
+a1Helper::sinbeta(){
   if(cosbeta()*cosbeta() > 1 ){if(debug){std::cout<<"Warning! Can not compute sin beta! return 0"<<std::endl;} return 0;}
   return sqrt(1 - cosbeta()*cosbeta());
 }
 
-double a1Helper::cosgamma(){
+double 
+a1Helper::cosgamma(){
   TVector3 nLCrossnPerp  = nL().Cross(nPerp());
 
   TVector3 qvect = _osPionLV.Vect()*(1/_osPionLV.Vect().Mag());
@@ -1073,7 +1057,8 @@ double a1Helper::cosgamma(){
   return -nL()*qvect/nLCrossnPerp.Mag();
 }
 
-double a1Helper::singamma(){
+double 
+a1Helper::singamma(){
   TVector3 nLCrossnPerp  = nL().Cross(nPerp());
   TVector3 qvect = _osPionLV.Vect()*(1/_osPionLV.Vect().Mag());
 
@@ -1091,6 +1076,7 @@ TMatrixT<double> a1Helper::convertToMatrix(TVectorT<double> V){
     M(i,0)=V(i);
   } return M;
 }
+
 TVector3
 a1Helper::Rotate(TVector3 LVec, TVector3 Rot){
   TVector3 vec = LVec;
