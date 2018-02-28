@@ -288,7 +288,7 @@ TauPolInterface::getVisibleOmega(string which)
      double omega(-999.);
      SetupLeg(which);
      if(type_!="rho") {
-       std::cout<<"This observable  is available for rho decay only (beta angle). a1 will be implemented later" << std::endl;
+       //std::cout<<"This observable  is available for rho decay only (beta angle). a1 will be implemented later" << std::endl;
      }
      if(type_=="rho") // charged-neutral energy asymmetry
        {
