@@ -253,7 +253,6 @@ TauPolInterface::getOmega(string which)
    { 
      double omega=-999;
      SetupLeg(which);
-     std::cout << type_ << std::endl;
      if(type_=="pion" || type_=="lepton") // theta
        {
 	 omega = 2*ProductLV.E()/TauLV.E() - 1;
