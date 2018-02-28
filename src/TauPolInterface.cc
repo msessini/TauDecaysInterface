@@ -253,11 +253,12 @@ TauPolInterface::getOmega(string which)
    { 
      double omega=-999;
      SetupLeg(which);
-     if(type_=="pion" || type_=="lepton")
+     std::cout << type_ << std::endl;
+     if(type_=="pion" || type_=="lepton") // beta
        {
 	 omega = 2*ProductLV.E()/TauLV.E() - 1;
        }
-     if(type_=="rho")
+     if(type_=="rho") // beta + theta
        {
 	 std::vector<TLorentzVector> particles; // tau, pi, pi0
 	 particles.push_back(TauLV);
@@ -267,7 +268,7 @@ TauPolInterface::getOmega(string which)
 	 rho.Configure(particles);
 	 omega=rho.getOmegaRho();
        }
-     if(type_=="a1")
+     if(type_=="a1") // beta + theta + gamma (Kuehn model)
        {
 	 std::vector<TLorentzVector> particles;// tau, os,ss1,ss2
 	 particles.push_back(TauLV);
@@ -289,7 +290,7 @@ TauPolInterface::getVisibleOmega(string which)
      if(type_!="rho") {
        std::cout<<"This observable  is available for rho decay only (beta angle). a1 will be implemented later" << std::endl;
      }
-     if(type_=="rho")
+     if(type_=="rho") // charged-neutral energy asymmetry
        {
 	 std::vector<TLorentzVector> particles; // tau, pi, pi0
 	 particles.push_back(TauLV);
@@ -308,10 +309,10 @@ TauPolInterface::getOmegabar(string which){
   double omega=-999;
   SetupLeg(which);
 
-  if(type_=="pion" || type_=="lepton"){
+  if(type_=="pion" || type_=="lepton"){ // beta
         omega = 2*ProductLV.E()/TauLV.E() - 1;
   }
-  if(type_=="rho")
+  if(type_=="rho") // beta + theta + alpha
       {
 	std::vector<TLorentzVector> particles; // tau, pi, pi0
 	particles.push_back(TauLV);
@@ -322,7 +323,7 @@ TauPolInterface::getOmegabar(string which){
 	omega=rho.getOmegaRhoBar();
       }
 
-     if(type_=="a1")
+     if(type_=="a1") // beta + theta + gamma + alpha (CLEO model)
        {
 	 std::vector<TLorentzVector> particles;// tau, os,ss1,ss2
 	 particles.push_back(TauLV);
