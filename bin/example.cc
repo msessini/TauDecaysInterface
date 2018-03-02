@@ -68,7 +68,7 @@ int main(int argc, const char* argv[]) {
   tauandprod_SingleA1.push_back(TLorentzVector(18.670063,-37.280665,19.350028,45.999999));  //  order matters! First should be tau
   tauandprod_SingleA1.push_back(TLorentzVector(1.141691,-2.936690,1.490553,3.488386));    //  OS pi
   tauandprod_SingleA1.push_back(TLorentzVector(6.270693,-11.695517,6.032508,14.577974)); //  SS1 pi 
-  tauandprod_SingleA1.push_back(TLorentzVector(7.184014,-14.091224,7.801724,17.636866));   //  SS2 pi  (s1 > s2!)
+  tauandprod_SingleA1.push_back(TLorentzVector(7.184014,-14.091224,7.801724,17.636866));   //  SS2 pi  
   
   
   TauSingleA1.Configure(tauandprod_SingleA1,"a1",-1);  // in case of a1 the last argument requires charge of the tau lepton (sum charge of three pions)
@@ -157,10 +157,12 @@ int main(int argc, const char* argv[]) {
   tauandprod__Pi.push_back(TLorentzVector(-0.239895,35.808984,28.817160,45.999203)); //  order matters! First should be tau
   tauandprod__Pi.push_back(TLorentzVector(0.546745,7.638778,6.673710,10.159121)); //   pi 
   
-  tauandprod_A1.push_back(TLorentzVector(-0.239895,35.808984,28.817160,45.999203)); //  order matters! First should be tau
-  tauandprod_A1.push_back(TLorentzVector(0.045646,-4.407360,-3.941665,5.914652)); //  OS pi
-  tauandprod_A1.push_back(TLorentzVector(0.116904,-18.704540,-14.602361,23.730190)); //  SS1 pi 
-  tauandprod_A1.push_back(TLorentzVector(-0.137735,-7.375450,-5.496942,9.200657)); //  SS2 pi  (s1 > s2!)
+  tauandprod_A1.push_back(TLorentzVector(18.670063,-37.280665,19.350028,45.999999));  //  order matters! First should be tau
+  tauandprod_A1.push_back(TLorentzVector(1.141691,-2.936690,1.490553,3.488386));    //  OS pi
+  tauandprod_A1.push_back(TLorentzVector(6.270693,-11.695517,6.032508,14.577974)); //  SS1 pi 
+  tauandprod_A1.push_back(TLorentzVector(7.184014,-14.091224,7.801724,17.636866));   //  SS2 pi 
+
+
   
   TauPiA1Pair.ConfigurePair(tauandprod__Pi,"pion",tauandprod_A1,"a1",1,-1);
   if(TauPiA1Pair.isPairConfigured())
