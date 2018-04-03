@@ -165,6 +165,10 @@ class a1Helper {
 
   std::vector<TLorentzVector> getBoosted(){return TauA1andProd_RF;}
 
+  void SetTauolaParametrization();
+  void SetPythia8Parametrization();
+
+
 
  private:
   double mpi;
@@ -219,5 +223,6 @@ class a1Helper {
   TLorentzVector   LFa1LV;
   TLorentzVector   LFtauLV;
   TMatrixT<double> convertToMatrix(TVectorT<double> V);
+  bool useTauolaParametrization;
 };
 #endif

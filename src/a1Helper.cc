@@ -1,7 +1,9 @@
 #include "TauPolSoftware/TauDecaysInterface/interface/a1Helper.h"
 #include <iostream>
 
-a1Helper::a1Helper(){
+a1Helper::a1Helper():
+useTauolaParametrization(false)
+{
 }
 
 a1Helper::a1Helper(vector<TLorentzVector> TauA1andProd){
@@ -107,6 +109,15 @@ a1Helper::Configure(vector<TLorentzVector> TauA1andProd, TLorentzVector Refernce
   }
   Setup(TauA1andProd,RefernceFrame, taucharge);
 
+}
+
+void 
+a1Helper::SetTauolaParametrization(){
+ useTauolaParametrization=true;
+}
+void 
+a1Helper::SetPythia8Parametrization(){
+ useTauolaParametrization=false;
 }
 
 bool
@@ -1156,12 +1167,16 @@ a1Helper::F3PI(double IFORM,double QQ,double SA,double SB){
   double M2SQ = M2*M2;
   double M3SQ = M3*M3;
   
-  
+  double TauolaPythiaFactor(1);
+  if(useTauolaParametrization)TauolaPythiaFactor=1;
+  if(!useTauolaParametrization)TauolaPythiaFactor=pow(10,-7);
+
+
   TComplex  BT1 = TComplex(1.,0.);
   TComplex  BT2 = TComplex(0.12,0.)*TComplex(1, 0.99*TMath::Pi(),  true);//  TComplex(1, 0.99*TMath::Pi(), true);   Real part must be equal to one, stupid polar implemenation in root
-  TComplex  BT3 = TComplex(0.37,0.)*TComplex(1, -0.15*TMath::Pi(), true);
-  TComplex  BT4 = TComplex(0.87,0.)*TComplex(1, 0.53*TMath::Pi(),  true);
-  TComplex  BT5 = TComplex(0.71,0.)*TComplex(1, 0.56*TMath::Pi(),  true);
+  TComplex  BT3 = TComplex(0.37*TauolaPythiaFactor,0.)*TComplex(1, -0.15*TMath::Pi(), true);
+  TComplex  BT4 = TComplex(0.87*TauolaPythiaFactor,0.)*TComplex(1, 0.53*TMath::Pi(),  true);
+  TComplex  BT5 = TComplex(0.71*TauolaPythiaFactor,0.)*TComplex(1, 0.56*TMath::Pi(),  true);
   TComplex  BT6 = TComplex(2.10,0.)*TComplex(1, 0.23*TMath::Pi(),  true);
   TComplex  BT7 = TComplex(0.77,0.)*TComplex(1, -0.54*TMath::Pi(), true);
 
