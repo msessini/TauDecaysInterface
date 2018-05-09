@@ -268,6 +268,7 @@ rhoHelper::getOmegaRhoBar(){
   TLorentzVector P= tauTau;
   TLorentzVector N= tauTau - piTau - pi0Tau;
   TVector3 h = P.M()*(2*(q*N)*q.Vect() - q.Mag2()*N.Vect()) * (1/ (2*(q*N)*(q*P) - q.Mag2()*(N*P)));
+  h *= (1.0 / h.Mag()); // normalisation needed at reconstruction level
   TVector3 TauLabDir =tauLabR1.Vect()*(1/tauLabR1.Vect().Mag());
   return h*TauLabDir;
 }

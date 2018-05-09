@@ -933,7 +933,10 @@ a1Helper::vgetA1omega(TString type){
 
 double 
 a1Helper::getOmegaA1Bar(){
-  return -nTZLFr()*PVC().Vect();
+  TVector3 nMinusTauAlongZLabFrame = -nTZLFr();
+  TVector3 polarimetricVector = PVC().Vect();
+  polarimetricVector *= (1.0 / polarimetricVector.Mag()); // normalisation needed at reconstruction level
+  return nMinusTauAlongZLabFrame * polarimetricVector;
 }
 
 double

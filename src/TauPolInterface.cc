@@ -235,7 +235,7 @@ TauPolInterface::getOmega(string which)
      SetupLeg(which);
      if(type_=="pion" || type_=="lepton") // theta
        {
-	 omega = 2*ProductLV.E()/TauLV.E() - 1;
+	 omega = 2.0 * std::min(ProductLV.E()/TauLV.E(), 1.0) - 1.0;
        }
      if(type_=="rho") // beta + theta
        {
@@ -289,7 +289,7 @@ TauPolInterface::getOmegabar(string which){
   SetupLeg(which);
 
   if(type_=="pion" || type_=="lepton"){ // theta
-        omega = 2*ProductLV.E()/TauLV.E() - 1;
+        omega = 2.0 * std::min(ProductLV.E()/TauLV.E(), 1.0) - 1.0;
   }
   if(type_=="rho") // beta + theta + alpha
       {
