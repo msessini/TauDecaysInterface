@@ -269,7 +269,7 @@ TauPolInterface::getVisibleOmega(string which)
      if(type_!="rho") {
        //std::cout<<"This observable  is available for rho decay only (beta angle). a1 will be implemented later" << std::endl;
      }
-     if(type_=="rho") // charged-neutral energy asymmetry
+     else if(type_=="rho") // charged-neutral energy asymmetry
        {
 	 std::vector<TLorentzVector> particles; // tau, pi, pi0
 	 particles.push_back(TauLV);
@@ -344,7 +344,10 @@ TauPolInterface::getCombVisibleOmega(){
   double omega1 = getVisibleOmega("first");
   double omega2 = getVisibleOmega("second");
   double Omega=999.;
-  Omega = (omega1 + omega2)/(1 + omega1*omega2);
+  if ((omega1 > -990.) && (omega2 > -990.))
+  {
+    Omega = (omega1 + omega2)/(1 + omega1*omega2);
+  }
   if(  std::isinf(std::fabs(Omega)) ||  std::isnan(std::fabs(Omega))) Omega  = -999.;
   return Omega;
 }
