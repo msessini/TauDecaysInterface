@@ -51,10 +51,6 @@ class TauPolInterface {
   void SetupLeg(string which="");
 
 
-  double mrho;
-  double mpi;
-  double mtau;
-  double ma1;
   bool debug;
   TMatrixT<double> convertToMatrix(TVectorT<double> V);
 

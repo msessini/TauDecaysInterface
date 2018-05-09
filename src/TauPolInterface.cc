@@ -5,17 +5,9 @@
 #include <TVector3.h>
 
 TauPolInterface::TauPolInterface():
-  mrho(0.773),
-  mpi(0.13957018),
-  mtau(1.776),
-  ma1(1.251),
   debug(false)
 { }  
-TauPolInterface::TauPolInterface(vector<TLorentzVector> TauAndProd, string type, int TauCharge): 
-  mrho(0.773),
-  mpi(0.13957018),
-  mtau(1.776),
-  ma1(1.251),
+TauPolInterface::TauPolInterface(vector<TLorentzVector> TauAndProd, string type, int TauCharge):
   debug(false)
  {
   if(type=="lepton" || type =="pion"){
@@ -36,11 +28,7 @@ TauPolInterface::TauPolInterface(vector<TLorentzVector> TauAndProd, string type,
   
   Configure(TauAndProd,  type,TauCharge);
  }
-TauPolInterface::TauPolInterface(vector<TLorentzVector> TauAndProd1, string type1,vector<TLorentzVector> TauAndProd2, string type2,int TauCharge1,int TauCharge2): 
-  mrho(0.773),
-  mpi(0.13957018),
-  mtau(1.776),
-  ma1(1.251),
+TauPolInterface::TauPolInterface(vector<TLorentzVector> TauAndProd1, string type1,vector<TLorentzVector> TauAndProd2, string type2,int TauCharge1,int TauCharge2):
   debug(false)
  {
   if(type1=="lepton" || type1 =="pion"){
