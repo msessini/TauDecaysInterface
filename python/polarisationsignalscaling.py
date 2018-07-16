@@ -32,12 +32,7 @@ class PolarisationScaleFactors(object):
 	
 	# preserve integral at <P_tau>^gen
 	def get_integral_scale_factor(self):
-		numerator = 2.0 * pow(self.n_gen_pospol, 2.0) * pow(self.n_gen_negpol, 2.0) * (self.n_reco_pospol + self.n_reco_negpol)
-		denominator  = self.n_reco_negpol * self.n_gen_pospol * (self.n_gen_negpol + self.n_gen_pospol * (self.n_gen_negpol - 1.0))
-		denominator += self.n_reco_pospol * self.n_gen_negpol * (self.n_gen_pospol + self.n_gen_negpol * (self.n_gen_pospol - 1.0))
-		
-		assert (denominator != 0.0)
-		return numerator / denominator
+		return self.n_gen_pospol + self.n_gen_negpol
 	
 	# combined scale factor for pos. polarisation
 	def get_scale_factor_pospol(self):
