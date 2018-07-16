@@ -54,4 +54,11 @@ class PolarisationScaleFactors(object):
 	# event number for neg. polarisation used as input for fit with combine
 	def get_n_fit_negpol(self):
 		return self.get_scale_factor_negpol() * self.n_reco_negpol
+	
+	# polarisation values
+	def get_gen_polarisation(self):
+		return ((self.n_gen_pospol - self.n_gen_negpol) / (self.n_gen_pospol + self.n_gen_negpol))
+	
+	def get_reco_polarisation(self):
+		return ((self.n_reco_pospol - self.n_reco_negpol) / (self.n_reco_pospol + self.n_reco_negpol))
 
