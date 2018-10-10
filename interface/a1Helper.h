@@ -7,6 +7,10 @@
 //
 // Original Author:  Vladimir Cherepanov 
 //         Created:  Mon May 1 13:49:02 CET 2017
+//         The hadronic current of a1 decay corresponds
+//         to CLEO parametrization: https://arxiv.org/abs/hep-ex/9902022
+//         with correpsonding paramters adjusted to the model 
+//         implemented to pythia8
 //
 //
 

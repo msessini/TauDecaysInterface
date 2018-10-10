@@ -7,7 +7,9 @@
 //
 // Original Author:  Vladimir Cherepanov 
 //         Created:  Sun Sep 10 17:49:02 CET 2017
-//
+//         Description of observables can be found in
+//         https://arxiv.org/pdf/1805.10552.pdf and
+//         http://inspirehep.net/record/318161
 //
 
 

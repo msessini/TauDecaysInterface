@@ -71,7 +71,7 @@ int main(int argc, const char* argv[]) {
   tauandprod_SingleA1.push_back(TLorentzVector(7.184014,-14.091224,7.801724,17.636866));   //  SS2 pi  
   
   
-  TauSingleA1.Configure(tauandprod_SingleA1,"a1",-1);  // in case of a1 the last argument requires charge of the tau lepton (sum charge of three pions)
+  TauSingleA1.Configure(tauandprod_SingleA1,"a1",-1);  // in case of a1 the last argument requires the charge of the tau lepton (sum charge of three pions)
   if(TauSingleA1.isConfigured())
     {
       std::cout<<" Single A1: omega    =   "<< TauSingleA1.getOmega() <<std::endl;     // 
