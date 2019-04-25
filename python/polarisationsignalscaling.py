@@ -64,3 +64,11 @@ class PolarisationScaleFactors(object):
 	def get_reco_polarisation(self):
 		return ((self.n_reco_pospol - self.n_reco_negpol) / (self.n_reco_pospol + self.n_reco_negpol))
 
+	# remove everything except for gen. level polarisation from pos. pol. at reco. level
+	def get_bias_removal_factor_pospol(self):
+		return (self.n_reco_pospol + self.n_reco_negpol) * (1.0 + self.get_gen_polarisation()) / (2.0 * self.n_reco_pospol)
+	
+	# remove everything except for gen. level polarisation from neg. pol. at reco. level
+	def get_bias_removal_factor_neg_pol(self):
+		return (self.n_reco_pospol + self.n_reco_negpol) * (1.0 - self.get_gen_polarisation()) / (2.0 * self.n_reco_negpol)
+
