@@ -974,7 +974,7 @@ PolarimetricA1::getOmegaA1(){
   double ga1 = (costhetaLF()*(RR -2) - 0.5*(3*cosbeta()*cosbeta() - 1)*V)*WA()/3 + 0.5*sinbeta()*sinbeta()*cos2gamma()*V*WC() - 0.5*sinbeta()*sinbeta()*sin2gamma()*V*WD() -cosbeta()*(costhetaLF()*cospsiLF() + sinthetaLF()*sinpsiLF()*sqrt(RR))*WE();
 
   double omega = ga1/fa1;
-  if(isinf(std::fabs(omega)) || isnan(std::fabs(omega))) omega  = -999.;
+  if(std::isinf(std::fabs(omega)) || std::isnan(std::fabs(omega))) omega  = -999.;
   return omega;
 }
 TLorentzVector
