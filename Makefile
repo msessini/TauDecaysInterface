@@ -4,8 +4,8 @@
 
 
 
-CXX           = g++ -Wno-deprecated -Wall
-LD            = g++ -Wno-deprecated -Wall
+CXX           = g++ -Wno-deprecated -Wall  -std=c++11 #-I$(ROOTSYS)/include -pthread -std=c++17 -m64 -I/opt/sbg/cms/safe1/cms/bourgatte/Tau/Temp/include -I../../ -c
+LD            = g++ -Wno-deprecated -Wall  -std=c++11 #-I$(ROOTSYS)/include -pthread -std=c++17 -m64 -I/opt/sbg/cms/safe1/cms/bourgatte/Tau/Temp/include -I../../ -c
 INSTALL	      = /usr/bin/install
 SHELL = /bin/sh
 
@@ -29,14 +29,19 @@ SF_HDRS    = $(SF_SRCS:.cc=.h)
 
 HDRS          =		interface/a1Helper.h \
 		interface/rhoHelper.h \
-		interface/TauPolInterface.h
-
+		interface/TauPolInterface.h \
+		interface/fonction_a1.h \
+		interface/PolarimetricA1.h \
+		interface/SCalculator.h
 
 
 SRCS          = 	src/a1Helper.cc \
 	        src/rhoHelper.cc \
 		src/TauPolInterface.cc \
-		bin/example.cc
+		src/fonction_a1.cc \
+		src/PolarimetricA1.cc \
+		src/SCalculator.cc \
+		bin/example.cc 
 
 OBJS1          = $(SRCS:.cc=.o) 
 OBJS2         = $(SRCS:.cc=.o) 
