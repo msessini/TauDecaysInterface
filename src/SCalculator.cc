@@ -412,6 +412,47 @@ double SCalculator::AcopAngle_DP(TString type1, TString type2, std::vector<TLore
   return acop_DP;
 }
 
+double SCalculator::AcopAngle_IP(TLorentzVector pion1, TVector3 r1, TLorentzVector pion2, TVector3 r2)
+{
+  SCalculator Scalc1("pion");
+  SCalculator Scalc2("pion");
+  //ZMF
+  TLorentzVector ZMF = pion1 + pion2;
+  //IP Minus
+  TVector3 p1 = pion1.Vect();
+  double proj1 = r1*p1/p1.Mag2();
+  TVector3 IP1 = r1-p1*proj1;
+  TLorentzVector eta1(IP1,0.);
+  //IP Plus
+  TVector3 p2 = pion2.Vect();
+  double proj2 = r2*p2/p2.Mag2();
+  TVector3 IP2 = r2-p2*proj2;
+  TLorentzVector eta2(IP2,0.);
+  //Minus side
+  TLorentzVector eta1_ZMF = Scalc1.Boost(eta1,ZMF);
+  TLorentzVector pion1_ZMF = Scalc1.Boost(pion1,ZMF);
+  TVector3 eta1Vec = eta1_ZMF.Vect();
+  TVector3 pion1Vec = pion1_ZMF.Vect();
+  eta1Vec *= 1/eta1Vec.Mag();
+  pion1Vec *= 1/pion1_ZMF.Mag();
+  TVector3 eta1Vectransv = eta1Vec - pion1Vec*(pion1Vec*eta1Vec);
+  eta1Vectransv *= 1/eta1Vectransv.Mag();
+  //Plus side
+  TLorentzVector eta2_ZMF = Scalc2.Boost(eta2,ZMF);
+  TLorentzVector pion2_ZMF = Scalc2.Boost(pion2,ZMF);
+  TVector3 eta2Vec = eta2_ZMF.Vect();
+  TVector3 pion2Vec = pion2_ZMF.Vect();
+  eta2Vec *= 1/eta2Vec.Mag();
+  pion2Vec *= 1/pion2_ZMF.Mag();
+  TVector3 eta2Vectransv = eta2Vec - pion2Vec*(pion2Vec*eta2Vec);
+  eta2Vectransv *= 1/eta2Vectransv.Mag();
+  //Angle 
+  double acop_IP = TMath::ACos(eta2Vectransv*eta1Vectransv);
+  double sign_IP = pion1Vec * (eta2Vectransv.Cross(eta1Vectransv));
+  if (sign_IP<0) acop_IP = 2.0*TMath::Pi() - acop_IP;
+  return acop_IP;
+}
+
 double SCalculator::AcopAngle_PVIP(TString type1, TString type2, TLorentzVector tau1, double charge, std::vector<TLorentzVector> sumPions, std::vector<double> sumPionsCharge, TLorentzVector tau2, TLorentzVector pion, TVector3 pion_ref)
 {
   if(type1 == "pion" || type2 != "pion"){cout<<"Impossible for this channel";}

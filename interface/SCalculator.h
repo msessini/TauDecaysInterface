@@ -44,6 +44,7 @@ class SCalculator {
   bool isOk(TString type1, TString type2, TLorentzVector tauMinus, std::vector<TLorentzVector> sumPionsMinus, std::vector<double> sumPionsChargeMinus, TLorentzVector tauPlus, std::vector<TLorentzVector> sumPionsPlus, std::vector<double> sumPionsChargePlus);
   double AcopAngle(TString type1, TString type2, TLorentzVector tauMinus, std::vector<TLorentzVector> sumPionsMinus, std::vector<double> sumPionsChargeMinus, TLorentzVector tauPlus, std::vector<TLorentzVector> sumPionsPlus, std::vector<double> sumPionsChargePlus);
   double AcopAngle_DP(TString type1, TString type2, std::vector<TLorentzVector> sumPionsMinus, std::vector<double> sumPionsChargeMinus, std::vector<TLorentzVector> sumPionsPlus, std::vector<double> sumPionsChargePlus);
+  double AcopAngle_IP(TLorentzVector pion1, TVector3 r1, TLorentzVector pion2, TVector3 r2);
   double AcopAngle_PVIP(TString type1, TString type2, TLorentzVector tau1, double charge, std::vector<TLorentzVector> sumPions, std::vector<double> sumPionsCharge, TLorentzVector tau2, TLorentzVector pion, TVector3 pion_ref);
   double AcopAngle_DPIP(TString type1, TString type2, std::vector<TLorentzVector> sumPions, std::vector<double> sumPionsCharge, TLorentzVector pion, TVector3 pion_ref);
   static double M(TLorentzVector LV);
