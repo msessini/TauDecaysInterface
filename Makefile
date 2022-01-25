@@ -18,8 +18,8 @@ SHAREDLIBFLAGS =
 
 
 override CXXFLAGS += -I$(ROOTSYS)/include $(shell root-config --cflags) -I../../ -c
-LDFLAGS       =  -ltbb
-ROOTLIBS      =  -L$(ROOTSYS)/lib $(shell root-config --glibs)
+LDFLAGS       =  
+ROOTLIBS      =  -L$(ROOTSYS)/lib -ltbb $(shell root-config --glibs)
 
 DEFS  	      = -DSTANDALONE=1
 LIBS          = $(ROOTLIBS) $(SHAREDLIBFLAGS)
