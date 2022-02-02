@@ -270,19 +270,22 @@ double SCalculator::AcopAngle(TString type1, TString type2, TLorentzVector tauMi
   
   tauandprodplus.push_back(tauPlus); 
   for(unsigned int i=0; i<sumPionsPlus.size();i++) {tauandprodplus.push_back(sumPionsPlus.at(i));}  
- 
-  Scalc1.Configure(tauandprodminus,tauandprodminus.at(0)+tauandprodplus.at(0), -1);
+
+  //TLorentzVector Frame = tauandprodminus.at(0)+tauandprodplus.at(0);
+  TLorentzVector Frame = tauandprodminus.at(1)+tauandprodplus.at(1);
+  
+  Scalc1.Configure(tauandprodminus,Frame, -1);
   TVector3 h1=Scalc1.pv();
 
-  Scalc2.Configure(tauandprodplus,tauandprodminus.at(0)+tauandprodplus.at(0), +1);
+  Scalc2.Configure(tauandprodplus,Frame, +1);
   TVector3 h2=Scalc2.pv();
 
   if(tauandprodminus.at(0)==zeroLV){ cout<<endl;tauandprodminus.at(0).Print();}
   if(tauandprodplus.at(0)==zeroLV) {cout<<endl;tauandprodplus.at(0).Print();}
   
-  TLorentzVector tauminus_HRF = Scalc1.Boost(tauandprodminus.at(0),tauandprodminus.at(0)+tauandprodplus.at(0));
+  TLorentzVector tauminus_HRF = Scalc1.Boost(tauandprodminus.at(0),Frame);
 
-  TLorentzVector tauplus_HRF  = Scalc2.Boost(tauandprodplus.at(0),tauandprodminus.at(0)+tauandprodplus.at(0));
+  TLorentzVector tauplus_HRF  = Scalc2.Boost(tauandprodplus.at(0),Frame);
   
   // tauandprodminus.at(0).Print();
   // tauandprodplus.at(0).Print();
@@ -332,7 +335,7 @@ double SCalculator::AcopAngle(TString type1, TString type2, TLorentzVector tauMi
     return (2.*TMath::Pi()-TMath::ATan2((k1.Cross(k2)).Mag(),k1*k2));}
 }
 
-double SCalculator::AcopAngle_DP(TString type1, TString type2, std::vector<TLorentzVector> sumPionsMinus, std::vector<double> sumPionsChargeMinus, std::vector<TLorentzVector> sumPionsPlus, std::vector<double> sumPionsChargePlus)
+double SCalculator::AcopAngle_DP(TString type1, TString type2, std::vector<TLorentzVector> sumPionsMinus, std::vector<TLorentzVector> sumPionsPlus)
 {
 
   SCalculator Scalc1(type1.Data());
@@ -491,7 +494,7 @@ double SCalculator::AcopAngle_PVIP(TString type1, TString type2, TLorentzVector 
   return acop;
 }
 
-double SCalculator::AcopAngle_DPIP(TString type1, TString type2, std::vector<TLorentzVector> sumPions, std::vector<double> sumPionsCharge, TLorentzVector pion, TVector3 pion_ref)
+double SCalculator::AcopAngle_DPIP(TString type1, TString type2, std::vector<TLorentzVector> sumPions, TLorentzVector pion, TVector3 pion_ref)
 {
 
   if(type1 == "pion" || type2 != "pion"){cout<<"Impossible for this channel";}
