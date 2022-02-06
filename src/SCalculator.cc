@@ -271,8 +271,8 @@ double SCalculator::AcopAngle(TString type1, TString type2, TLorentzVector tauMi
   tauandprodplus.push_back(tauPlus); 
   for(unsigned int i=0; i<sumPionsPlus.size();i++) {tauandprodplus.push_back(sumPionsPlus.at(i));}  
 
-  //TLorentzVector Frame = tauandprodminus.at(0)+tauandprodplus.at(0);
-  TLorentzVector Frame = tauandprodminus.at(1)+tauandprodplus.at(1);
+  TLorentzVector Frame = tauandprodminus.at(0)+tauandprodplus.at(0);
+  //TLorentzVector Frame = tauandprodminus.at(1)+tauandprodplus.at(1);
   
   Scalc1.Configure(tauandprodminus,Frame, -1);
   TVector3 h1=Scalc1.pv();
@@ -537,37 +537,30 @@ double SCalculator::AcopAngle_DPIP(TString type1, TString type2, std::vector<TLo
     }
   }
   if(type1 == "rho"){
-    ZMF = sumPions.at(0) + pion;
+    ZMF = Pi + pion;
   }
 
-  TLorentzVector Pi_ZMF = Scalc1.Boost(Pi,ZMF);
-  TLorentzVector PiZero_ZMF = Scalc1.Boost(PiZero,ZMF);
-  TVector3 vecPi = Pi_ZMF.Vect();
-  TVector3 vecPiZero = PiZero_ZMF.Vect();
-  vecPi *= 1/vecPi.Mag();
-  vecPiZero *= 1/vecPiZero.Mag();
-  TVector3 vecPiZerotransv = vecPiZero - vecPi*(vecPi*vecPiZero);
-  vecPiZerotransv *= 1/vecPiZerotransv.Mag();
+  TLorentzVector eta1_ZMF = Scalc1.Boost(PiZero,ZMF);
+  TLorentzVector pi_ZMF = Scalc1.Boost(Pi,ZMF);
+  TVector3 eta1Transv = eta1_ZMF.Vect() - pi_ZMF.Vect()*(pi_ZMF.Vect()*eta1_ZMF.Vect()/pi_ZMF.Vect().Mag2());
+  eta1Transv *= 1/eta1Transv.Mag();
 
-  SCalculator Scalc2(type2.Data());
-  TVector3 pion_dir = pion.Vect();
-  double proj = pion_ref*pion_dir/pion_dir.Mag2();
-  TVector3 pion_IP = pion_ref-pion_dir*proj;
-  TLorentzVector eta(pion_IP,0);
-  TLorentzVector eta_ZMF = Scalc2.Boost(eta,ZMF);
-  TVector3 etaVec = eta_ZMF.Vect().Unit();
+  SCalculator Scalc2("pion");
+  double proj = pion_ref*pion.Vect()/pion.Vect().Mag2();
+  TVector3 pion_IP = pion_ref-pion.Vect()*proj;
+  TLorentzVector eta2(pion_IP,0.);
+  TLorentzVector eta2_ZMF = Scalc2.Boost(eta2,ZMF);
   TLorentzVector pion_ZMF = Scalc2.Boost(pion,ZMF);
-  TVector3 PiVec = pion_ZMF.Vect().Unit();
-  TVector3 etaVecTrans = (etaVec - PiVec*(PiVec*etaVec)).Unit();
+  TVector3 eta2Transv = eta2_ZMF.Vect() - pion_ZMF.Vect()*(pion_ZMF.Vect()*eta2_ZMF.Vect()/pion_ZMF.Vect().Mag2());
+  eta2Transv *= 1/eta2Transv.Mag();
 
-  double acop = TMath::ACos(vecPiZerotransv*etaVecTrans);
-  double sign = PiVec * (vecPiZerotransv.Cross(etaVecTrans));
+  double acop = TMath::ACos(eta1Transv*eta2Transv);
+  double sign = pion_ZMF.Vect() * (eta1Transv.Cross(eta2Transv));
   if (sign<0) acop = 2.0*TMath::Pi() - acop;
   if (Y<0) {
     acop = acop + TMath::Pi();
     if (acop>2*TMath::Pi()) acop = acop - 2*TMath::Pi();
   }
-
   return acop;
 }
 
