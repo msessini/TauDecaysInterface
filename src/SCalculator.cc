@@ -454,10 +454,10 @@ double SCalculator::AcopAngle_IP(TLorentzVector pion1, TVector3 r1, TLorentzVect
 
 double SCalculator::AcopAngle_PVIP(TString type1, TString type2, TLorentzVector tau1, double charge, std::vector<TLorentzVector> sumPions, std::vector<double> sumPionsCharge, TLorentzVector tau2, TLorentzVector pion, TVector3 pion_ref)
 {
-  if(type1 == "pion" || type2 != "pion"){cout<<"Impossible for this channel";}
+  if(!(type2 == "pion" || type2 == "muon")){cout<<"Impossible for this channel";}
 
   SCalculator Scalc1(type1.Data());
-  SCalculator Scalc2(type2.Data());
+  SCalculator Scalc2;
   //ZMF
   TLorentzVector ZMF = tau1 + tau2;
   //PV
@@ -497,7 +497,7 @@ double SCalculator::AcopAngle_PVIP(TString type1, TString type2, TLorentzVector 
 double SCalculator::AcopAngle_DPIP(TString type1, TString type2, std::vector<TLorentzVector> sumPions, TLorentzVector pion, TVector3 pion_ref)
 {
 
-  if(type1 == "pion" || type2 != "pion"){cout<<"Impossible for this channel";}
+  if(!(type2 == "pion" || type2 == "muon")){cout<<"Impossible for this channel";}
 
   SCalculator Scalc1(type1.Data());
 
@@ -545,7 +545,7 @@ double SCalculator::AcopAngle_DPIP(TString type1, TString type2, std::vector<TLo
   TVector3 eta1Transv = eta1_ZMF.Vect() - pi_ZMF.Vect()*(pi_ZMF.Vect()*eta1_ZMF.Vect()/pi_ZMF.Vect().Mag2());
   eta1Transv *= 1/eta1Transv.Mag();
 
-  SCalculator Scalc2("pion");
+  SCalculator Scalc2;
   double proj = pion_ref*pion.Vect()/pion.Vect().Mag2();
   TVector3 pion_IP = pion_ref-pion.Vect()*proj;
   TLorentzVector eta2(pion_IP,0.);
