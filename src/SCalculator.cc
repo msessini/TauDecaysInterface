@@ -270,8 +270,12 @@ double SCalculator::AcopAngle(TString type1, TString type2, TLorentzVector tauMi
   
   tauandprodplus.push_back(tauPlus); 
   for(unsigned int i=0; i<sumPionsPlus.size();i++) {tauandprodplus.push_back(sumPionsPlus.at(i));}  
-
-  TLorentzVector Frame = tauandprodminus.at(0)+tauandprodplus.at(0);
+  
+  TLorentzVector Frame;
+  if(type1=="pion" && type2=="pion"){
+    Frame = tauandprodminus.at(1)+tauandprodplus.at(1);
+  }
+  else Frame = tauandprodminus.at(0)+tauandprodplus.at(0);
   //TLorentzVector Frame = tauandprodminus.at(1)+tauandprodplus.at(1);
   
   Scalc1.Configure(tauandprodminus,Frame, -1);
@@ -452,14 +456,14 @@ double SCalculator::AcopAngle_IP(TLorentzVector pion1, TVector3 r1, TLorentzVect
   return acop_IP;
 }
 
-double SCalculator::AcopAngle_PVIP(TString type1, TString type2, TLorentzVector tau1, double charge, std::vector<TLorentzVector> sumPions, std::vector<double> sumPionsCharge, TLorentzVector tau2, TLorentzVector pion, TVector3 pion_ref)
+double SCalculator::AcopAngle_PVIP(TString type1, TString type2, TLorentzVector tau1, double charge, std::vector<TLorentzVector> sumPions, std::vector<double> sumPionsCharge, TLorentzVector pion, TVector3 pion_ref)
 {
   if(!(type2 == "pion" || type2 == "muon")){cout<<"Impossible for this channel";}
 
   SCalculator Scalc1(type1.Data());
   SCalculator Scalc2;
   //ZMF
-  TLorentzVector ZMF = tau1 + tau2;
+  TLorentzVector ZMF = tau1 + pion;
   //PV
   Scalc1.SortPions(sumPions, sumPionsCharge);
   //
@@ -467,10 +471,10 @@ double SCalculator::AcopAngle_PVIP(TString type1, TString type2, TLorentzVector 
   tauandprod.push_back(tau1);
   for(unsigned int i=0; i<sumPions.size();i++) {tauandprod.push_back(sumPions.at(i));}
   //
-  Scalc1.Configure(tauandprod,tau1+tau2,charge);
+  Scalc1.Configure(tauandprod,ZMF,charge);
   //
   TVector3 h1=Scalc1.pv();
-  TLorentzVector tau_HRF = Scalc1.Boost(tau1,tau1+tau2);
+  TLorentzVector tau_HRF = Scalc1.Boost(tau1,ZMF);
   h1*=1./h1.Mag();
   TVector3 k1 = (h1.Cross(tau_HRF.Vect().Unit())).Unit();
   //IP

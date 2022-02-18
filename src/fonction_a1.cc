@@ -282,6 +282,22 @@ TVector3 GetRefittedPV(std::vector<size_t> hashes, TVector3 PVNominal, std::vect
   return PVNominal;
 }
 
+unsigned int GetRefittedPVBSIdx(std::vector<size_t> hashes, TVector3 PVNominal, std::vector<double> PVRefit_X , std::vector<double> PVRefit_Y, std::vector<double> PVRefit_Z ,std::vector<size_t> VertexHash1, std::vector<size_t> VertexHash2, bool &isRefit)
+{
+  // find the vertex among the refitted vertices
+  for (unsigned int ivertex =0; ivertex<PVRefit_X.size(); ivertex++){
+    size_t selectionHash = 0;
+    boost::hash_combine(selectionHash, VertexHash1.at(ivertex));
+    boost::hash_combine(selectionHash, VertexHash2.at(ivertex));
+    if ( std::find(hashes.begin(), hashes.end(), selectionHash) != hashes.end() ){
+      //cout<<"NoBS Hash Matching!!!"<<endl;
+      isRefit=true;
+      return ivertex;
+    }
+  } // loop over refitted vertices collection
+  isRefit=false;
+  return -1;
+}
 
 TVector3 GetRefittedPV(std::vector<size_t> hashes, TVector3 PVNominal, std::vector<double> PVRefit_X , std::vector<double> PVRefit_Y, double PV_Z ,std::vector<size_t> VertexHash1, std::vector<size_t> VertexHash2, bool &isRefit)
 { 

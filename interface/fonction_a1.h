@@ -43,6 +43,8 @@ std::vector<TLorentzVector> tauPairMomentumSolutions(const TVector3 &tau1Dir, co
 
 TVector3 GetRefittedPV(std::vector<size_t> hashes, TVector3 PVNominal, std::vector<double> PVRefit_X , std::vector<double> PVRefit_Y ,std::vector<double> PVRefit_Z ,std::vector<size_t> VertexHash1, std::vector<size_t> VertexHash2, bool &isRefit);
 
+unsigned int GetRefittedPVBSIdx(std::vector<size_t> hashes, TVector3 PVNominal, std::vector<double> PVRefit_X , std::vector<double> PVRefit_Y ,std::vector<double> PVRefit_Z ,std::vector<size_t> VertexHash1, std::vector<size_t> VertexHash2, bool &isRefit);
+
 TVector3 GetRefittedPV(std::vector<size_t> hashes, TVector3 PVNominal, std::vector<double> PVRefit_X , std::vector<double> PVRefit_Y ,double PV_Z ,std::vector<size_t> VertexHash1, std::vector<size_t> VertexHash2, bool &isRefit);
 
 
