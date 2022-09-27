@@ -1,4 +1,4 @@
-#include "TauPolSoftware/TauDecaysInterface/interface/SCalculator.h"
+#include "HiggsCPinTauDecays/TauDecaysInterface/interface/SCalculator.h"
 #include <iostream>
 
 SCalculator::SCalculator(){
@@ -419,21 +419,23 @@ double SCalculator::AcopAngle_DP(TString type1, TString type2, std::vector<TLore
   return acop_DP;
 }
 
-double SCalculator::AcopAngle_IP(TLorentzVector pion1, TVector3 r1, TLorentzVector pion2, TVector3 r2)
+TVector3 SCalculator::GetIP(TLorentzVector p4, TVector3 ref)
+{
+  TVector3 dir = p4.Vect();
+  double proj = ref*dir/dir.Mag2();
+  return ref-dir*proj;
+}
+
+
+double SCalculator::AcopAngle_IP(TLorentzVector pion1, TVector3 IP1, TLorentzVector pion2, TVector3 IP2)
 {
   SCalculator Scalc1("pion");
   SCalculator Scalc2("pion");
   //ZMF
   TLorentzVector ZMF = pion1 + pion2;
   //IP Minus
-  TVector3 p1 = pion1.Vect();
-  double proj1 = r1*p1/p1.Mag2();
-  TVector3 IP1 = r1-p1*proj1;
   TLorentzVector eta1(IP1,0.);
   //IP Plus
-  TVector3 p2 = pion2.Vect();
-  double proj2 = r2*p2/p2.Mag2();
-  TVector3 IP2 = r2-p2*proj2;
   TLorentzVector eta2(IP2,0.);
   //Minus side
   TLorentzVector eta1_ZMF = Scalc1.Boost(eta1,ZMF);
@@ -456,9 +458,9 @@ double SCalculator::AcopAngle_IP(TLorentzVector pion1, TVector3 r1, TLorentzVect
   return acop_IP;
 }
 
-double SCalculator::AcopAngle_PVIP(TString type1, TString type2, TLorentzVector tau1, double charge, std::vector<TLorentzVector> sumPions, std::vector<double> sumPionsCharge, TLorentzVector pion, TVector3 pion_ref)
+double SCalculator::AcopAngle_PVIP(TString type1, TString type2, TLorentzVector tau1, std::vector<TLorentzVector> sumPions, std::vector<double> sumPionsCharge, TLorentzVector pion, TVector3 pion_IP)
 {
-  if(!(type2 == "pion" || type2 == "muon")){cout<<"Impossible for this channel";}
+  if(!(type2 == "pion" || type2 == "muon") || type1 == "none") return -99;
 
   SCalculator Scalc1(type1.Data());
   SCalculator Scalc2;
@@ -468,20 +470,21 @@ double SCalculator::AcopAngle_PVIP(TString type1, TString type2, TLorentzVector 
   Scalc1.SortPions(sumPions, sumPionsCharge);
   //
   vector<TLorentzVector> tauandprod;
+  int taucharge = 0;
   tauandprod.push_back(tau1);
-  for(unsigned int i=0; i<sumPions.size();i++) {tauandprod.push_back(sumPions.at(i));}
+  for(unsigned int i=0; i<sumPions.size();i++) {
+    tauandprod.push_back(sumPions.at(i));
+    taucharge+=sumPionsCharge.at(i);
+  }
   //
-  Scalc1.Configure(tauandprod,ZMF,charge);
+  Scalc1.Configure(tauandprod,ZMF,taucharge);
   //
   TVector3 h1=Scalc1.pv();
   TLorentzVector tau_HRF = Scalc1.Boost(tau1,ZMF);
   h1*=1./h1.Mag();
   TVector3 k1 = (h1.Cross(tau_HRF.Vect().Unit())).Unit();
   //IP
-  TVector3 pion_dir = pion.Vect();
-  double proj = pion_ref*pion_dir/pion_dir.Mag2();
-  TVector3 pion_IP = pion_ref-pion_dir*proj;
-  TLorentzVector eta(pion_IP,0);
+  TLorentzVector eta(pion_IP,0.);
   //
   TLorentzVector eta_ZMF = Scalc1.Boost(eta,ZMF);
   TLorentzVector pion_ZMF = Scalc1.Boost(pion,ZMF);
@@ -498,15 +501,14 @@ double SCalculator::AcopAngle_PVIP(TString type1, TString type2, TLorentzVector 
   return acop;
 }
 
-double SCalculator::AcopAngle_DPIP(TString type1, TString type2, std::vector<TLorentzVector> sumPions, TLorentzVector pion, TVector3 pion_ref)
+double SCalculator::AcopAngle_DPIP(TString type1, TString type2, std::vector<TLorentzVector> sumPions, TLorentzVector pion, TVector3 pion_IP)
 {
-
-  if(!(type2 == "pion" || type2 == "muon")){cout<<"Impossible for this channel";}
+  if(!(type2 == "pion" || type2 == "muon") || type1=="none") return -99;
 
   SCalculator Scalc1(type1.Data());
 
-  unsigned int idx_pi;
-  unsigned int idx_a1;
+  unsigned int idx_pi = -1;
+  unsigned int idx_a1 = -1;
 
   TLorentzVector Pi, PiZero;
   double Y = 1.;
@@ -550,8 +552,6 @@ double SCalculator::AcopAngle_DPIP(TString type1, TString type2, std::vector<TLo
   eta1Transv *= 1/eta1Transv.Mag();
 
   SCalculator Scalc2;
-  double proj = pion_ref*pion.Vect()/pion.Vect().Mag2();
-  TVector3 pion_IP = pion_ref-pion.Vect()*proj;
   TLorentzVector eta2(pion_IP,0.);
   TLorentzVector eta2_ZMF = Scalc2.Boost(eta2,ZMF);
   TLorentzVector pion_ZMF = Scalc2.Boost(pion,ZMF);

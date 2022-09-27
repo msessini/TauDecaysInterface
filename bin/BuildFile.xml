@@ -2,5 +2,5 @@
 	<flags LDFLAGS="-rdynamic" />
 	<flags EDM_PLUGIN="1"/>
 	<use name="root" />
-	<use name="TauPolSoftware/TauDecaysInterface" />
+	<use name="HiggsCPinTauDecays/TauDecaysInterface" />
 </bin>

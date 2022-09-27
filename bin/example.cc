@@ -3,9 +3,9 @@
 #include <iostream>
 #include <vector>
 #include "TLorentzVector.h"
-#include "TauPolSoftware/TauDecaysInterface/interface/a1Helper.h"
-#include "TauPolSoftware/TauDecaysInterface/interface/rhoHelper.h"
-#include "TauPolSoftware/TauDecaysInterface/interface/TauPolInterface.h"
+#include "HiggsCPinTauDecays/TauDecaysInterface/interface/a1Helper.h"
+#include "HiggsCPinTauDecays/TauDecaysInterface/interface/rhoHelper.h"
+#include "HiggsCPinTauDecays/TauDecaysInterface/interface/TauPolInterface.h"
 
 
 int main(int argc, const char* argv[]) {

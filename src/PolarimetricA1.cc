@@ -1,4 +1,4 @@
-#include "TauPolSoftware/TauDecaysInterface/interface/PolarimetricA1.h"
+#include "HiggsCPinTauDecays/TauDecaysInterface/interface/PolarimetricA1.h"
 #include <iostream>
 
 PolarimetricA1::PolarimetricA1(){

@@ -44,9 +44,10 @@ class SCalculator {
   bool isOk(TString type1, TString type2, TLorentzVector tauMinus, std::vector<TLorentzVector> sumPionsMinus, std::vector<double> sumPionsChargeMinus, TLorentzVector tauPlus, std::vector<TLorentzVector> sumPionsPlus, std::vector<double> sumPionsChargePlus);
   double AcopAngle(TString type1, TString type2, TLorentzVector tauMinus, std::vector<TLorentzVector> sumPionsMinus, std::vector<double> sumPionsChargeMinus, TLorentzVector tauPlus, std::vector<TLorentzVector> sumPionsPlus, std::vector<double> sumPionsChargePlus);
   double AcopAngle_DP(TString type1, TString type2, std::vector<TLorentzVector> sumPionsMinus, std::vector<TLorentzVector> sumPionsPlus);
-  double AcopAngle_IP(TLorentzVector pion1, TVector3 r1, TLorentzVector pion2, TVector3 r2);
-  double AcopAngle_PVIP(TString type1, TString type2, TLorentzVector tau1, double charge, std::vector<TLorentzVector> sumPions, std::vector<double> sumPionsCharge, TLorentzVector pion, TVector3 pion_ref);
-  double AcopAngle_DPIP(TString type1, TString type2, std::vector<TLorentzVector> sumPions, TLorentzVector pion, TVector3 pion_ref);
+  TVector3 GetIP(TLorentzVector p4, TVector3 ref);
+  double AcopAngle_IP(TLorentzVector pion1, TVector3 IP1, TLorentzVector pion2, TVector3 IP2);
+  double AcopAngle_PVIP(TString type1, TString type2, TLorentzVector tau1, std::vector<TLorentzVector> sumPions, std::vector<double> sumPionsCharge, TLorentzVector pion, TVector3 pion_IP);
+  double AcopAngle_DPIP(TString type1, TString type2, std::vector<TLorentzVector> sumPions, TLorentzVector pion, TVector3 pion_IP);
   static double M(TLorentzVector LV);
   //static TVector3 GetRefittedPV(vector<size_t> hashes, TVector3 PVNominal, vector<double> PVRefit_X , vector<double> PVRefit_Y ,vector<double> PVRefit_Z ,vector<size_t> VertexHash1, vector<size_t> VertexHash2);
 

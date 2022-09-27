@@ -1,4 +1,4 @@
-#include "TauPolSoftware/TauDecaysInterface/interface/TauPolInterface.h"
+#include "HiggsCPinTauDecays/TauDecaysInterface/interface/TauPolInterface.h"
 
 #include <iostream>
 
